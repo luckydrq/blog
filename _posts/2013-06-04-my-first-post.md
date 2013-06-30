@@ -1,2 +1,6 @@
+---
+title: my first post
+categories: ['js', 'web']
+---
 ==
-  haha
+  this is my post
