@@ -1,6 +1,6 @@
 ---
 title: my first post
-categories: ['js', 'web']
+categories: js
 ---
 ==
   this is my post
