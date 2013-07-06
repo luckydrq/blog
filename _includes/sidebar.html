@@ -1,8 +1,8 @@
 <div class="sidebar pure-u">
     <header class="header pure-u-1">
         <hgroup>
-            <h1 class="brand-title">Lucky's Blog</h1>
-            <h2 class="brand-tagline"><a target="_blank" href="http://purecss.io/">Based on Pure</a></h2>
+            <h1 class="brand-title">Lucky || 雪卒</h1>
+            <!--<h2 class="brand-tagline"><a target="_blank" href="http://purecss.io/">Based on Pure</a></h2>-->
         </hgroup>
         <nav class="nav">
             <ul class="nav-list">
@@ -18,10 +18,12 @@
     <div class="slide">
     </div>
     <div id="whoami">
-        this is whoami this is whoami this is whoami
+        LUCKY，以前的外号。<br />
+        雪卒，现在的花名。
+
     </div>
     <div id="tags">
-        this is tags this is tags this is tags
+        this is tags 
     </div>
 </div>
 <script type="text/javascript">
@@ -29,27 +31,10 @@
         S.ready(function(S){
             function SlideMgr(config){
                 SlideMgr.superclass.constructor.call(this, config)
-                this.initialize.call(this)
+                this._init.call(this)
             }
             S.augment(SlideMgr, Event)
             S.extend(SlideMgr, S.Base, {
-                initialize: function(){
-                    var self = this
-                    self.set('el', S.one('.sidebar'))
-                    self.set('block', S.one('.slide'))
-                    self.set('currentBlock', null)
-                    self.set('text', {
-                        'whoami': self.get('el').one('#whoami').text(),
-                        'tags': self.get('el').one('#tags').text()
-                    })
-
-                    self.on('.slideBtn', 'click', function(e){
-                        var a = S.Node(e.currentTarget)
-                        self.get('el').all('.hover').removeClass('hover')
-                        a.addClass('hover')
-                        self.doSlide(a.attr('slideid'))
-                    })
-                },
                 doSlide: function(id){
                     var self = this
                     var node = self.get('el').one('#' + id)
@@ -57,20 +42,73 @@
                     var currentBlock = self.get('currentBlock')
 
                     if(node){
-                        self.set('currentBlock', 'id')
+                        self.set('currentBlock', id)
                         
                         if(!currentBlock){
-                            block.text(self.get('text')[id])
-                            Anim(block, {marginRight: '0px'}, 0.5, 'easeOut').run()
+                            block.html(self.get('text')[id])
+
+                            self._adjustSize(block)
+
+                            S.later(function(){
+                                Anim(block, {marginRight: '0px'}, 0.5, 'easeOut').run()
+                            },100)
+                            
                         }
                         else{
-                            Anim(block, {marginRight: '-80%'}, 0.2, 'easeOut', function(){
-                                block.text(self.get('text')[id])
-                                Anim(block, {marginRight: '0px'}, 0.5, 'easeOut').run()
+                            //退出时尽管退到最大的width，后续调整
+                            Anim(block, {marginRight: '-' + self.get('maxWidth')}, 0.2, 'easeOut', function(){
+                                block.html(self.get('text')[id])
+
+                                self._adjustSize(block)
+
+                                S.later(function(){
+                                    Anim(block, {marginRight: '0px'}, 0.5, 'easeOut').run()
+                                },100)                       
                             }).run() 
                         }
                            
                     }
+                },
+                
+            })
+            S.augment(SlideMgr, {
+                _init: function(){
+                    var self = this
+                    self.set('el', S.one('.sidebar'))
+                    self.set('block', S.one('.slide'))
+                    self.set('maxWidth', self.get('block').width())
+                    self.set('currentBlock', null)
+                    self.set('text', {
+                        'whoami': self.get('el').one('#whoami').html(),
+                        'tags': self.get('el').one('#tags').html()
+                    })
+
+                    self.on('.slideBtn', 'click', function(e){
+                        var a = S.Node(e.currentTarget)
+                        if(a.attr('slideid') === self.get('currentBlock'))
+                            return
+
+                        self.get('el').all('.hover').removeClass('hover')
+                        a.addClass('hover')
+                        self.doSlide(a.attr('slideid'))
+                    })
+                },
+                _adjustSize: function(block){
+                    var self = this        
+                    var maxWidth = self.get('maxWidth')
+                    var cssWidth
+
+                    //先设置成auto，取默认宽度
+                    block.css('width', 'auto')
+
+                    //加一点，避免过早折行
+                    var width = block.width() + 40
+                    cssWidth = width > maxWidth ? maxWidth + 'px' : width + 'px'
+
+                    block.css({
+                        'width': cssWidth,
+                        'marginRight': '-' + cssWidth
+                    })
                 }
             })
 

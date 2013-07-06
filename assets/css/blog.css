@@ -166,6 +166,7 @@ a:focus {
     line-height: 1.5em;
     float: right;
     margin-right: -80%;
+    text-align: right;
 }
 #whoami, #tags{
     display: none;
