@@ -1,0 +1,9 @@
+{
+	"author": "luckydrq<drqzju@gmail.com>",
+	"name": "blog-of-lucky",
+	"description": "blog of lucky",
+	"homepage": "http://luckydrq.com",
+	"devDependencies": {
+		"grunt": "*"
+	}
+}
