@@ -167,6 +167,20 @@ a:focus {
     float: right;
     margin-right: -80%;
     text-align: right;
+    color: rgb(142, 142, 214);
+}
+.slide .tags{
+}
+.slide .tags:after{
+    content: "";
+    display: block;
+    clear: both;
+}
+.slide a{
+    cursor: pointer;
+    display: block;
+    margin-right: 10px;
+    float: right;
 }
 #whoami, #tags{
     display: none;
