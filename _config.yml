@@ -2,3 +2,4 @@ source:         .
 destination:    ./_site
 exclude:        ['blog.sublime-project','blog.sublime-workspace']
 pagetags:       ['js', 'mobile', 'css', 'life', 'car', 'web', 'node']
+author:         'Deng Ruoqi'
