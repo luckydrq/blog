@@ -1,42 +1,42 @@
 <!doctype html>
 <html>
 <head>
-	<title>articles</title>
-	<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/pure/0.2.0/pure-min.css"></head>
-	<link rel="stylesheet" type="text/css" href="./assets/css/font.css">
-	<link rel="stylesheet" type="text/css" href="./assets/css/blog.css">
-	<link rel="stylesheet" type="text/css" href="./assets/css/syntax.css">
+  <title>articles</title>
+  <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/pure/0.2.0/pure-min.css"></head>
+  <link rel="stylesheet" type="text/css" href="./assets/css/font.css">
+  <link rel="stylesheet" type="text/css" href="./assets/css/blog.css">
+  <link rel="stylesheet" type="text/css" href="./assets/css/syntax.css">
 <body>
-	<div class="content pure-u-1">
-		<div class="posts pure-g">
-			<h1 class="pure-u-1 content-subhead">Recent Posts</h1>
-			{% for post in site.posts %}
-			<section class="post pure-u-1">
-				<header class="post-header">
-					<h2 class="post-title pure-u-1">{{ post.title }}</h2>
+  <div class="content pure-u-1">
+    <div class="posts pure-g">
+      <h1 class="pure-u-1 content-subhead">Recent Posts</h1>
+      {% for post in site.posts %}
+      <section class="post pure-u-1">
+        <header class="post-header">
+          <h2 class="post-title pure-u-1">{{ post.title }}</h2>
 
-					<p class="post-meta pure-u-1">
-						{{ post.date | date_to_string }}
+          <p class="post-meta pure-u-1">
+            {{ post.date | date_to_string }}
                         {% for category in post.categories %}
-						<a class="post-category post-category-{{category}}" href="http://purecss.io/layouts/blog/#">{{ category }}</a>
-						{% endfor %}
-					</p>
-				</header>
+            <a class="post-category post-category-{{category}}" href="http://purecss.io/layouts/blog/#">{{ category }}</a>
+            {% endfor %}
+          </p>
+        </header>
 
-				<div class="post-description pure-u-1">
-					<p>
-						{% if post.content contains '<!--more-->' %}
-    						{{ post.content | split:'<!--more-->' | first }}
-						    <br />
-						    <a style="text-decoration:underline;">阅读全文&gt;&gt;</a>
-						{% else %}
-						    <a style="text-decoration:underline;">阅读全文&gt;&gt;</a>
-						{% endif %}
-					</p>
-				</div>
-			</section>
-			{% endfor %}
-		</div>
-	</div>
+        <div class="post-description pure-u-1">
+          <p>
+            {% if post.content contains '<!--more-->' %}
+                {{ post.content | split:'<!--more-->' | first }}
+                <br />
+                <a style="text-decoration:underline;">阅读全文&gt;&gt;</a>
+            {% else %}
+                <a style="text-decoration:underline;">阅读全文&gt;&gt;</a>
+            {% endif %}
+          </p>
+        </div>
+      </section>
+      {% endfor %}
+    </div>
+  </div>
 </body>
 </html>
