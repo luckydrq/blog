@@ -3,4 +3,13 @@ title: my first post
 categories: js
 ---
 
-this is my first post!
+{% highlight javascript %}
+  function test(){
+	console.log('test')
+  }
+{% endhighlight %}
+
+
+```
+  this is markdown syntax
+```
