@@ -23,8 +23,8 @@
 
     </div>
     <div id="tags">
-        {% for tag in site.pagetags %}
-            <a>{{ tag }}</a>
+        {% for category in page.categories %}
+            <a>{{ category }}</a>
             {% cycle '', '', '', '<br />' %}
         {% endfor %} 
     </div>
