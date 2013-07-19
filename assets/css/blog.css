@@ -11,6 +11,7 @@ a {
 a:hover,
 a:focus {
     text-decoration: underline;
+    cursor: pointer;
 }
 
 /* LAYOUT CSS */
@@ -108,7 +109,7 @@ a:focus {
     margin-left: 1em;
 }
 .post-description {
-    font-family: Georgia, "Cambria", serif;
+    font-family: sans-serif;
     color: #444;
     line-height: 1.8em;
 }
