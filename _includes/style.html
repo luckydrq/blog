@@ -11,6 +11,14 @@
     vertical-align: top;
     text-rendering: auto;
   }
+  .content-subhead span{
+  	float: right;
+  	line-height: 47px;
+  	color: #ccc;
+  }
+  .post-title a{
+  	color: #000000;
+  }
 </style>
 <script type="text/javascript">
 	function goBack () {
@@ -22,7 +30,14 @@
 			history.go(-1)
 		}
 	}
+	function goOut(href){
+		var loc = window.parent.location
+		if(href){
+			loc.hash = '#' + href
+		}
+		window.open(loc.href, '_blank')
+	}
 </script>
-<h1 class="pure-u-1 content-subhead" onclick="javascript:goBack()"><a class="readAll pure-button">Back</a></h1>
-<h2 class="post-title pure-u-1" style="text-align:center;margin-bottom:1em;">{{ page.title }}</h2>
+<h1 class="pure-u-1 content-subhead" onclick="javascript:goBack()"><a class="readAll pure-button">Back</a><span>点击标题生成外网地址</span></h1>
+<h2 class="post-title pure-u-1" style="text-align:center;margin-bottom:1em;"><a title="点击生成外网地址" href="javascript:goOut('{{ page.url }}')">{{ page.title }}</a></h2>
 

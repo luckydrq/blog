@@ -44,10 +44,10 @@
   <script type="text/javascript">
     KISSY.use(['node', 'sizzle'], function(S){
       S.ready(function(){
-        S.all('a.readAll').on('click', function(e){
+        /*S.all('a.readAll').on('click', function(e){
           var a = new S.Node(e.currentTarget)
           window.parent.location.hash = ('#' + a.attr('href'))
-        })
+        })*/
 
         var body = S.one('body')
         var hash = window.parent.location.hash
