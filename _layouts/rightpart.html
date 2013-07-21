@@ -17,8 +17,8 @@
 
           <p class="post-meta pure-u-1">
             {{ post.date | date_to_string }}
-                        {% for category in post.categories %}
-            <a class="post-category post-category-{{category}}" href="http://purecss.io/layouts/blog/#">{{ category }}</a>
+                        {% for tag in post.pagetags %}
+            <a class="post-category post-category-{{tag}}" href="http://purecss.io/layouts/blog/#">{{ tag }}</a>
             {% endfor %}
           </p>
         </header>
@@ -26,11 +26,13 @@
         <div class="post-description pure-u-1">
           <p>
             {% if post.content contains '<!--more-->' %}
-                {{ post.content | split:'<!--more-->' | first }}
-                <br />
-                <a style="text-decoration:underline;">阅读全文&gt;&gt;</a>
+              {% assign a = post.content | split:'<!--more-->' %}
+              {% for item in a limit:1 offset:1 %}
+                {{ item }}
+              {% endfor%}
+              <a href="{{ post.url }}" class="readAll">Read it</a> 
             {% else %}
-                <a style="text-decoration:underline;">阅读全文&gt;&gt;</a>
+              <a href="{{ post.url }}" class="readAll">Read it</a>
             {% endif %}
           </p>
         </div>
