@@ -16,6 +16,7 @@ a:focus {
 a.readAll{
     margin-top: 1em;
     font-size: 0.8em;
+    text-transform: capitalize;
 }
 blockquote {
     background:#f9f9f9;
