@@ -14,8 +14,6 @@ a:focus {
     cursor: pointer;
 }
 a.readAll{
-    display: block;
-    text-decoration: underline;
     margin-top: 1em;
     font-size: 0.8em;
 }

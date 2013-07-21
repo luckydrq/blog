@@ -6,6 +6,30 @@
   <link rel="stylesheet" type="text/css" href="./assets/css/font.css">
   <link rel="stylesheet" type="text/css" href="./assets/css/blog.css">
   <link rel="stylesheet" type="text/css" href="./assets/css/syntax.css">
+  <script type="text/javascript" src="http://a.tbcdn.cn/s/kissy/1.3.0/seed-min.js"></script>
+  <script type="text/javascript">
+    KISSY.use(['node', 'sizzle'], function(S){
+      S.ready(function(){
+        S.all('a.readAll').on('click', function(e){
+          var a = new S.Node(e.currentTarget)
+          window.parent.location.hash = ('#' + a.attr('href'))
+        })
+
+        var hash = window.parent.location.hash
+        var page
+        var jump
+        if(hash.indexOf('#') != -1){
+          page = hash.substr(1, hash.length - 1)
+          if(!!page){
+            jump = S.one("[href='" + page + "']")
+            if(!!jump){
+              jump.fire('click')
+            }
+          }
+        }
+      })
+    })
+  </script>
 <body>
   <div class="content pure-u-1">
     <div class="posts pure-g">
@@ -28,11 +52,12 @@
             {% if post.content contains '<!--more-->' %}
               {% assign a = post.content | split:'<!--more-->' %}
               {% for item in a limit:1 offset:1 %}
-                {{ item }}
+                {{ item }}&nbsp;...<br />
               {% endfor%}
-              <a href="{{ post.url }}" class="readAll">Read it</a> 
+              <a href="{{ post.url }}" class="readAll pure-button">Read it</a> 
             {% else %}
-              <a href="{{ post.url }}" class="readAll">Read it</a>
+
+              <a href="{{ post.url }}" class="readAll pure-button">Read it</a>
             {% endif %}
           </p>
         </div>
