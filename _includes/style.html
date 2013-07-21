@@ -11,9 +11,18 @@
     vertical-align: top;
     text-rendering: auto;
   }
-  .content-subhead span{
+  .content-h1{
+  	height: 24px;
+  }
+  .content-h1 a{
+  	margin-top: -1em;
+  }
+  .content-h1 span{
+  	display: block;
   	float: right;
-  	line-height: 47px;
+  	font-size: 0.8em;
+  	line-height: 24px;
+  	margin-top: -0.5em;
   	color: #ccc;
   }
   .post-title a{
@@ -38,6 +47,6 @@
 		window.open(loc.href, '_blank')
 	}
 </script>
-<h1 class="pure-u-1 content-subhead" onclick="javascript:goBack()"><a class="readAll pure-button">Back</a><span>点击标题生成外网地址</span></h1>
+<h1 class="pure-u-1 content-subhead content-h1" onclick="javascript:goBack()"><a class="readAll pure-button">Back</a><span>点击标题生成外网地址</span></h1>
 <h2 class="post-title pure-u-1" style="text-align:center;margin-bottom:1em;"><a title="点击生成外网地址" href="javascript:goOut('{{ page.url }}')">{{ page.title }}</a></h2>
 
