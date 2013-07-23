@@ -19,7 +19,7 @@
           <p class="post-meta pure-u-1">
             {{ post.date | date_to_string }}
             {% for tag in post.pagetags %}
-              <a class="post-category post-category-{{tag}}" href="{{tag}}.html">{{ tag }}</a>
+              <a class="post-category post-category-{{tag}}" href="commonTag.html?tag={{tag}}">{{ tag }}</a>
             {% endfor %}
           </p>
         </header>
