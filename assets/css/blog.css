@@ -121,7 +121,7 @@ blockquote p {
 }
 
 .post {
-    padding-bottom: 2em;
+    padding-bottom: 0em;
 }
 .post-title {
     font-size: 2em;

@@ -11,8 +11,10 @@
 	<div class="content pure-u-1">
 		<div class="posts pure-g">
 			<h1 class="pure-u-1 content-subhead"><a class="none content-subhead" href="rightpart.html">index</a>&nbsp;&gt;&nbsp;{{page.tag}}</h1>
+			{% assign hasItem = false %}
 			{% for post in site.posts %}
         {% if post.pagetags contains {{page.tag}} %}
+          {% assign hasItem = true %}
 			    <section class="post pure-u-1">
 				    <header class="post-header">
 					    <h2 class="post-title pure-u-1">
@@ -32,6 +34,9 @@
 			    </section>
 			  {% endif %}
       {% endfor %}
+      {% if hasItem == false %}
+        <span style="letter-spacing:0;">没有找到相关类型的文章。</span>
+      {% endif %}
 		</div>
 	</div>
 </body>
