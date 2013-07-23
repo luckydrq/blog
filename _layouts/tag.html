@@ -9,7 +9,7 @@
 	<script type="text/javascript" src="http://a.tbcdn.cn/s/kissy/1.3.0/seed-min.js"></script>
 	<script type="text/javascript">
 		var S = KISSY
-		var ps = {data: []}, p, hasTag = false
+		var ps = {data: []}, p, hasTag
 		var tag = window.location.href.match(/(?:http\/\/)?.*\?tag=(\S+)$/)[1]
 	</script>
 <body style="display:none">
@@ -18,25 +18,27 @@
 			<h1 class="pure-u-1 content-subhead"><a class="none content-subhead" href="rightpart.html">index</a>&nbsp;&gt;&nbsp;<span id="span_Tag"></span></h1>
 			{% for post in site.posts %}
       <script type="text/javascript">
+        hasTag = false
       	p = {
       		tag: window.tag,
       		title: '{{post.title}}',
       		url: '{{post.url}}',
       		date: '{{post.date | date_to_string}}',
-      		tags: [],
-      		hasTag: false
+      		tags: []
       	}
-      	ps.data.push(p)
       </script>
 			  {% for tag in post.pagetags %}
 			  <script type="text/javascript">
+			    p.tags.push('{{tag}}')
+
 			    if(window.tag == '{{tag}}'){
-			    	p.hasTag = true
-			    	window.hasTag = true
+			    	hasTag = true
 			    }
-			  		p.tags.push('{{tag}}')
 			  </script>
         {% endfor %}
+      <script type="text/javascript">
+      	if(hasTag) ps.data.push(p)
+      </script>
       {% endfor %}
         <div id="tpl_Container"></div>
     </div>
@@ -50,7 +52,7 @@
 				$('#span_Tag').html(tag)
 
 				//渲染模板
-				if(window.hasTag){
+				if(ps.data.length){
 					var tpl = $('#tpl').html()
 				  $('#tpl_Container').html(new XTemplate(tpl).render(window.ps))
 				}
@@ -66,7 +68,6 @@
 	<script id="tpl" type="text/template">
 	{% raw %}
 	  {{#each data}}
-      {{#if hasTag }}
 	    <section class="post pure-u-1">
 	  	  <header class="post-header">
 	  		  <h2 class="post-title pure-u-1">
@@ -84,7 +85,6 @@
 	  		  </p>
 	  	  </header>
 	    </section>
-	    {{/if}}
 	  {{/each}}
 	{% endraw %}
 	</script>
