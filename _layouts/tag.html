@@ -7,37 +7,86 @@
 	<link rel="stylesheet" type="text/css" href="./assets/css/blog.css">
 	<link rel="stylesheet" type="text/css" href="./assets/css/syntax.css">
 	<script type="text/javascript" src="http://a.tbcdn.cn/s/kissy/1.3.0/seed-min.js"></script>
-<body>
+	<script type="text/javascript">
+		var S = KISSY
+		var ps = {data: []}, p, hasTag = false
+		var tag = window.location.href.match(/(?:http\/\/)?.*\?tag=(\S+)$/)[1]
+	</script>
+<body style="display:none">
 	<div class="content pure-u-1">
 		<div class="posts pure-g">
-			<h1 class="pure-u-1 content-subhead"><a class="none content-subhead" href="rightpart.html">index</a>&nbsp;&gt;&nbsp;{{page.tag}}</h1>
-			{% assign hasItem = false %}
+			<h1 class="pure-u-1 content-subhead"><a class="none content-subhead" href="rightpart.html">index</a>&nbsp;&gt;&nbsp;<span id="span_Tag"></span></h1>
 			{% for post in site.posts %}
-        {% if post.pagetags contains {{page.tag}} %}
-          {% assign hasItem = true %}
-			    <section class="post pure-u-1">
-				    <header class="post-header">
-					    <h2 class="post-title pure-u-1">
-						    <a class="none" href="{{post.url}}">{{ post.title }}</a>
-					    </h2>
-
-					    <p class="post-meta pure-u-1">
-						  {{ post.date | date_to_string }}
-						  <a class="post-category post-category-{{page.tag}}" href="{{page.tag}}.html">{{page.tag}}</a>
-						  {% for tag in post.pagetags %}
-                {% if tag != {{page.tag}} %}
-						    <a class="post-category post-category-{{tag}}" href="{{tag}}.html">{{tag}}</a>
-						    {% endif %}
-						  {% endfor %}
-					    </p>
-				    </header>
-			    </section>
-			  {% endif %}
+      <script type="text/javascript">
+      	p = {
+      		tag: window.tag,
+      		title: '{{post.title}}',
+      		url: '{{post.url}}',
+      		date: '{{post.date | date_to_string}}',
+      		tags: [],
+      		hasTag: false
+      	}
+      	ps.data.push(p)
+      </script>
+			  {% for tag in post.pagetags %}
+			  <script type="text/javascript">
+			    if(window.tag == '{{tag}}'){
+			    	p.hasTag = true
+			    	window.hasTag = true
+			    }
+			  		p.tags.push('{{tag}}')
+			  </script>
+        {% endfor %}
       {% endfor %}
-      {% if hasItem == false %}
-        <span style="letter-spacing:0;">没有找到相关类型的文章。</span>
-      {% endif %}
-		</div>
+        <div id="tpl_Container"></div>
+    </div>
 	</div>
+	<script type="text/javascript">
+		S.ready(function(){
+			S.use(['node', 'xtemplate'], function(S, Node, XTemplate){
+				var $ = S.Node.all
+
+				//添加标题
+				$('#span_Tag').html(tag)
+
+				//渲染模板
+				if(window.hasTag){
+					var tpl = $('#tpl').html()
+				  $('#tpl_Container').html(new XTemplate(tpl).render(window.ps))
+				}
+				else{
+					$('#tpl_Container').html('<span style="letter-spacing:0;">没有找到相关类型的文章。</span>')
+				}
+
+				//渲染完成后显示页面
+				$('body').show()
+			})
+		})
+	</script>
+	<script id="tpl" type="text/template">
+	{% raw %}
+	  {{#each data}}
+      {{#if hasTag }}
+	    <section class="post pure-u-1">
+	  	  <header class="post-header">
+	  		  <h2 class="post-title pure-u-1">
+	  			  <a class="none" href="{{url}}">{{title}}</a>
+	  		  </h2>
+
+	  		  <p class="post-meta pure-u-1">
+	  			  {{date}}
+	  			  <a class="post-category post-category-{{tag}}" href="commonTag.html?tag={{tag}}">{{tag}}</a>
+	  			  {{#each tags}}
+	  			    {{#if this !== ../tag }}
+	  			      <a class="post-category post-category-{{this}}" href="commonTag.html?tag={{this}}">{{this}}</a>
+	  			    {{/if}}
+	  			  {{/each}}
+	  		  </p>
+	  	  </header>
+	    </section>
+	    {{/if}}
+	  {{/each}}
+	{% endraw %}
+	</script>
 </body>
 </html>

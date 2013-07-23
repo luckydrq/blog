@@ -37,7 +37,7 @@
                 var tag = S.trim(e.currentTarget.innerHTML)
                 var fr = S.one('#rightpart')
                 if(fr){
-                    fr.attr('src', tag + '.html')
+                    fr.attr('src', 'commonTag.html?tag=' + tag)
                 }
             })
 
