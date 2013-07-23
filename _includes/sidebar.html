@@ -32,6 +32,15 @@
 <script type="text/javascript">
     KISSY.use(['event', 'anim', 'base', 'node'], function(S, Event, Anim){
         S.ready(function(S){
+            //绑定tag点击事件
+            Event.delegate('.slide', 'click', 'a', function(e){
+                var tag = S.trim(e.currentTarget.innerHTML)
+                var fr = S.one('#rightpart')
+                if(fr){
+                    fr.attr('src', tag + '.html')
+                }
+            })
+
             //初始化滑动
             function SlideMgr(config){
                 SlideMgr.superclass.constructor.call(this, config)

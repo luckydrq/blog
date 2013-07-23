@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+<head>
+	<title>articles</title>
+	<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/pure/0.2.0/pure-min.css"></head>
+	<link rel="stylesheet" type="text/css" href="./assets/css/font.css">
+	<link rel="stylesheet" type="text/css" href="./assets/css/blog.css">
+	<link rel="stylesheet" type="text/css" href="./assets/css/syntax.css">
+	<script type="text/javascript" src="http://a.tbcdn.cn/s/kissy/1.3.0/seed-min.js"></script>
+<body>
+	<div class="content pure-u-1">
+		<div class="posts pure-g">
+			<h1 class="pure-u-1 content-subhead"><a class="none content-subhead" href="rightpart.html">index</a>&nbsp;&gt;&nbsp;{{page.tag}}</h1>
+			{% for post in site.posts %}
+        {% if post.pagetags contains {{page.tag}} %}
+			    <section class="post pure-u-1">
+				    <header class="post-header">
+					    <h2 class="post-title pure-u-1">
+						    <a class="none" href="{{post.url}}">{{ post.title }}</a>
+					    </h2>
+
+					    <p class="post-meta pure-u-1">
+						  {{ post.date | date_to_string }}
+						  <a class="post-category post-category-{{page.tag}}" href="{{page.tag}}.html">{{page.tag}}</a>
+						  {% for tag in post.pagetags %}
+                {% if tag != {{page.tag}} %}
+						    <a class="post-category post-category-{{tag}}" href="{{tag}}.html">{{tag}}</a>
+						    {% endif %}
+						  {% endfor %}
+					    </p>
+				    </header>
+			    </section>
+			  {% endif %}
+      {% endfor %}
+		</div>
+	</div>
+</body>
+</html>

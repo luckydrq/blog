@@ -18,6 +18,9 @@ a.readAll{
     font-size: 0.8em;
     text-transform: capitalize;
 }
+a.none{
+    color: #000000;
+}
 blockquote {
     background:#f9f9f9;
     border-left:10px solid #ccc;
