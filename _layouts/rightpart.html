@@ -25,7 +25,6 @@
         </header>
 
         <div class="post-description pure-u-1">
-          <p>
             {% if post.content contains '<!--more-->' %}
               {% assign a = post.content | split:'<!--more-->' %}
               {% for item in a limit:1 offset:1 %}
@@ -35,7 +34,6 @@
             {% else %}
               <a href="{{ post.url }}" class="readAll pure-button">Read it</a>
             {% endif %}
-          </p>
         </div>
       </section>
       {% endfor %}

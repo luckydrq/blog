@@ -17,6 +17,7 @@ a.readAll{
     margin-top: 1em;
     font-size: 0.8em;
     text-transform: capitalize;
+    text-indent: 0;
 }
 a.none{
     color: #000000;
@@ -138,6 +139,9 @@ blockquote p {
     font-family: sans-serif;
     color: #444;
     line-height: 1.8em;
+}
+.post-description p{
+    text-indent: 2em;
 }
 .post-meta {
     color: #999;
