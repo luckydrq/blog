@@ -156,19 +156,27 @@ blockquote p {
     background: #999;
     font-size: 80%;
 }
-    .post-category-design {
-        background: #5aba59;
-    }
-    .post-category-pure {
-        background: #4d85d1;
-    }
-    .post-category-yui {
-        background: #8156a7;
-    }
-    .post-category-js {
-        background: #df2d4f;
-    }
-
+.post-category-design {
+    background: #5aba59;
+}
+.post-category-pure {
+    background: #4d85d1;
+}
+.post-category-yui {
+    background: #8156a7;
+}
+.post-category-js {
+    background: #df2d4f;
+}
+.post-category-git{
+    background: #6633FF;
+}
+.post-category-life{
+    background: #00FFFF;
+}
+.post-category-css{
+    background: #FFCC33;
+}
 .post-images {
     margin: 1em 0;
 }
