@@ -42,3 +42,5 @@ $ git push origin master
 
 这样就完成了一次提交。后面的工作就和操作```Github```的远程仓库没区别了。
 
+{% include footer.html %}
+
