@@ -2,6 +2,7 @@
 title: 创建基于本地协议的git服务器
 pagetags:
 - git
+excerpt: 今天了解了下git挂钩（git hook），本想通过Github实践一下其中的服务器挂钩。后来经过Google发现，Github只提供所谓的web hook，即当你push代码至某个repository时...
 ---
 
 {% include style.html %}
@@ -25,7 +26,9 @@ $ git init --bare gitLocal    //仓库目录：~/gitLocal
 
 {% highlight bash %}
 $ cd gitLocal
-$ git init --bare Test.git    //注意，这里我踩过坑，如果不加--bare参数，后续在push时会发生[remote rejected]错误
+$ git init --bare Test.git    
+
+//注意，这里我踩过坑，如果不加--bare参数，后续在push时会发生[remote rejected]错误
 {% endhighlight %}
 
 代码目录创建好后，我们就可以对远程仓库进行拉取和推送数据了。
