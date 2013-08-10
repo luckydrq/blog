@@ -1,4 +1,4 @@
-blog
+Blog of lucky
 ====
 
-my blog
+This is where i share my thoughts and sentiment.
