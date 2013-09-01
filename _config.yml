@@ -1,3 +1,6 @@
 source: .
 destination: ./_site
 exclude: ['blog.sublime-project', 'blog.sublime-workspace', 'node_modules', 'package.json', 'Gruntfile.js']
+name: Lucky Deng
+description: Lucky's blog
+url: http://luckydrq.com
