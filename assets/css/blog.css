@@ -123,6 +123,10 @@ p img{
     font-weight: 500;
     letter-spacing: 0.1em;
 }
+.content-subhead a{
+    float: right;
+    color: #aaa;
+}
 
 .content {
     padding: 2em 3em 0;
