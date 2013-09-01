@@ -1,13 +1,13 @@
 <div class="sidebar pure-u">
     <header class="header pure-u-1">
         <hgroup>
-            <h1 class="brand-title">Lucky || 雪卒</h1>
+            <h1 class="brand-title">Lucky Deng</h1>
             <!--<h2 class="brand-tagline"><a target="_blank" href="http://purecss.io/">Based on Pure</a></h2>-->
         </hgroup>
         <nav class="nav">
             <ul class="nav-list">
                 <li class="nav-item">
-                    <a class="pure-button slideBtn" slideid="whoami" href="javascript:void(0)">Who am i</a>
+                    <a class="pure-button slideBtn" slideid="whoami" href="javascript:void(0)">About</a>
                 </li>
                 <li class="nav-item">
                     <a class="pure-button slideBtn" slideid="tags" href="javascript:void(0)">Tags</a>
@@ -18,15 +18,13 @@
     <div class="slide">
     </div>
     <div id="whoami">
-        LUCKY，以前的外号。<br />
-        雪卒，现在的花名。
-
+        喜爱单线程和异步的野路子。
     </div>
     <div id="tags">
         {% for tag in page.pagetags %}
             <a>{{ tag }}</a>
             {% cycle '', '', '', '<br />' %}
-        {% endfor %} 
+        {% endfor %}
     </div>
 </div>
 <script type="text/javascript">
@@ -56,7 +54,7 @@
 
                     if(node){
                         self.set('currentBlock', id)
-                        
+
                         if(!currentBlock){
                             block.html(self.get('text')[id])
 
@@ -65,7 +63,7 @@
                             S.later(function(){
                                 Anim(block, {marginRight: '0px'}, 0.5, 'easeOut').run()
                             },100)
-                            
+
                         }
                         else{
                             //退出时尽管退到最大的width，后续调整
@@ -76,13 +74,13 @@
 
                                 S.later(function(){
                                     Anim(block, {marginRight: '0px'}, 0.5, 'easeOut').run()
-                                },100)                       
-                            }).run() 
+                                },100)
+                            }).run()
                         }
-                           
+
                     }
                 },
-                
+
             })
             S.augment(SlideMgr, {
                 _init: function(){
@@ -107,7 +105,7 @@
                     })
                 },
                 _adjustSize: function(block){
-                    var self = this        
+                    var self = this
                     var maxWidth = self.get('maxWidth')
                     var cssWidth
 
@@ -126,6 +124,6 @@
             })
 
             new SlideMgr()
-        }) 
+        })
     })
 </script>

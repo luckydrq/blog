@@ -12,7 +12,7 @@
       {% for post in site.posts limit:4 offset:0 %}
       <section class="post pure-u-1">
         <header class="post-header">
-          <h2 class="post-title pure-u-1">{{ post.title }}</h2>
+          <h2 class="post-title pure-u-1"><a href="{{ post.url }}">{{ post.title }}</a></h2>
 
           <p class="post-meta pure-u-1">
             {{ post.date | date_to_string }}
@@ -24,7 +24,6 @@
 
         <div class="post-description pure-u-1">
             <p>{{ post.excerpt }}</p>
-            <a href="{{ post.url }}" class="readAll pure-button">Read it</a>
         </div>
       </section>
       {% endfor %}

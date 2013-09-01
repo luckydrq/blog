@@ -41,6 +41,13 @@ blockquote p {
     display:inline;
 }
 
+p img{
+    border: none;
+    display: block;
+    margin: 20px auto;
+    width: 80%;
+}
+
 /* LAYOUT CSS */
 #layout {
     padding-left: 25%; /* "left col (nav + list)" width */
@@ -73,7 +80,7 @@ blockquote p {
     margin: 0;
 }
 .brand-title {
-    text-transform: uppercase;
+
 }
 .brand-tagline {
     font-weight: 300;
@@ -130,6 +137,9 @@ blockquote p {
     margin-bottom: 0.2em;
     line-height: 38px;
 }
+.post-title a{
+    color: rgb(34,34,34);
+}
 .post-avatar {
     border-radius: 50px;
     float: right;
@@ -174,8 +184,11 @@ blockquote p {
 .post-category-git{
     background: #6633FF;
 }
+.post-category-car{
+    background: #0b432c;
+}
 .post-category-life{
-    background: #00FFFF;
+    background: #f0a329;
 }
 .post-category-css{
     background: #FFCC33;
