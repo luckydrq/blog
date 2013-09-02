@@ -3,7 +3,9 @@
     -moz-box-sizing: border-box;
     box-sizing: border-box;
 }
-
+body{
+    position: relative;
+}
 a {
     text-decoration: none;
     color: rgb(142, 142, 214);
@@ -250,6 +252,32 @@ p img{
 #whoami, #tags{
     display: none;
 }
+/*top right*/
+.top-right{
+    position: absolute;
+    top: 0;
+    right: -100px;
+    z-index: 999;
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+}
+.top-right a{
+    display: block;
+    margin: 0;
+    padding: 5px 100px;
+    text-align: center;
+    color: rgb(255,255,255);
+    text-decoration: none;
+    cursor: pointer;
+}
+.top-right .github{
+    background: rgb(24,33,61);
+}
+.top-right .rss{
+    background: rgb(255,222,80);
+}
+
 
 @media (max-width: 767px) {
     .sidebar {
