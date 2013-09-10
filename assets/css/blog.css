@@ -207,6 +207,9 @@ h1,h2,h3,h4,h5,h6{
 .post-category-translation{
     background: #12ee46;
 }
+.post-category-web{
+    background: #0d85f4;
+}
 .post-images {
     margin: 1em 0;
 }
