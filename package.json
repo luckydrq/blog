@@ -3,6 +3,9 @@
   "name": "blog-of-lucky",
   "description": "blog of lucky",
   "homepage": "http://luckydrq.com",
+  "scripts": {
+    "test": "vows --spec"
+  },
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-contrib-cssmin": "~0.6.1",
