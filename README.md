@@ -1,6 +1,1 @@
-Visit http://github.com/wendal/gor
-
-## License
-
-Released under the [MIT License](http://www.opensource.org/licenses/MIT)
-
+This is a blog which is hosted on [PI](http://www.raspberrypi.org/) and powered by [gor](http://github.com/wendal/gor).
