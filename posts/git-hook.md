@@ -1,8 +1,8 @@
 ---
-title: git-hook
-date: '2013-08-10'
 title: git hook在项目里的简单应用
+date: '2013-08-10'
 description:
+permalink: /2013-08-10/git-hook
 categories:
 - tools
 tags:

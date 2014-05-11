@@ -2,8 +2,9 @@
 title: 译:此像素非彼像素
 date: '2013-09-06'
 description:
+permalink: /2013-09-06/a-pixel-is-not-a-pixel 
 categories:
-- tranlation
+- translation
 - web
 tags:
 - css

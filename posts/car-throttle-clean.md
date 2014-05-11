@@ -1,8 +1,8 @@
 ---
-title: car-throttle-clean
-date: '2013-09-01'
 title: 自己动手清洗节气门
+date: '2013-09-01'
 description:
+permalink: /2013-09-01/car-throttle-clean
 categories:
 - life
 tags:

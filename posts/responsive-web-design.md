@@ -1,7 +1,8 @@
 ---
 title: 响应式设计小结
 date: '2013-09-09'
-description:
+description: 
+permalink: /2013-09-09/responsive-web-design
 categories:
 - web
 tags:

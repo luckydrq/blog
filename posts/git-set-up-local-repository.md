@@ -1,8 +1,8 @@
 ---
-title: git-set-up-local-repository
-date: '2013-07-28'
 title: 创建基于本地协议的git服务器
+date: '2013-07-28'
 description:
+permalink: /2013-07-28/git-set-up-local-repository
 categories:
 - tools
 tags:
