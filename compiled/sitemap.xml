@@ -4,6 +4,11 @@
 		<loc>http://luckydrq.com/</loc>
 	</url>
 	<url>
+		<loc>http://luckydrq.com/2014-06-02/pi-blog</loc>
+		<lastmod>2014-06-02</lastmod>
+		<changefreq>weekly</changefreq>
+	</url>
+	<url>
 		<loc>http://luckydrq.com/2013-09-09/responsive-web-design</loc>
 		<lastmod>2013-09-09</lastmod>
 		<changefreq>weekly</changefreq>
