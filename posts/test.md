@@ -6,4 +6,4 @@ categories:
 - test
 ---
 
-## test blog hook
+## test success
