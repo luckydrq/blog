@@ -13,7 +13,8 @@ tags:
 
 ### Generator和Generator Object
 
-#### 什么是`Generator`?
+
+#### 什么是Generator?
 
 ```javascript
   function *gen(){
@@ -34,7 +35,7 @@ tags:
   }
 ```
 
-#### 什么是`Generator Object`？
+#### 什么是Generator Object？
 
 ```javascript
   function *gen(){}
