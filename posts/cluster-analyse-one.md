@@ -8,8 +8,6 @@ tags:
 - node
 ---
 
-## Cluster机制剖析1——进程的复制
-
 Cluster相信大家都很熟悉，这里就不再赘述了，引用官网的一段话：
 
 >A single instance of Node runs in a single thread. To take advantage of multi-core systems the user will sometimes want to launch a cluster of Node processes to handle the load.
