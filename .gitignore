@@ -1,5 +1,4 @@
 .DS_Store
-compiled
 node_modules
 npm-debug.log
 .tmp_partials

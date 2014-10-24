@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>响应式设计小结</title>
+  
+    <meta name="author" content="Ruoqi Deng">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le styles -->
+    <link href="/assets/twitter/stylesheets/bootstrap.min.css" type="text/css" rel="stylesheet" media="all">
+<link href="/assets/twitter/stylesheets/style.css" type="text/css" rel="stylesheet" media="all">
+<link href="/assets/twitter/widgets/google_prettify/stylesheets/twitter-bootstrap.css" type="text/css" rel="stylesheet" media="all">
+ 
+
+    <!-- Le fav and touch icons -->
+  <!-- Update these with your own images
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+  -->
+  </head>
+
+  <body>
+
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="brand" href="/">Lucky Blog</a>
+          <ul class="nav">
+            
+              
+
+
+  <li><a href="/archive">Archive</a></li>
+
+
+            
+              
+
+
+  <li><a href="/tags">Tags</a></li>
+
+
+            
+              
+
+
+  <li><a href="/categories">Categories</a></li>
+
+
+            
+              
+
+
+  <li><a href="/pages">Pages</a></li>
+
+
+            
+              
+
+
+  <li><a href="/about">About Me</a></li>
+
+
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="content">
+        <div class="page-header">
+  <h1>响应式设计小结 </h1>
+</div>
+
+<div class="row">
+  <div class="span8">
+    <p>上周项目不是很忙，就从同事那里借了一本《响应式Web设计实践》，读后收获不小。原本以为响应式就是利用媒介查询(Media Queries)针对不同尺寸的屏幕进行样式定制，现在看来远没有那么简单，需要考虑有很多（技术、设计、流程、项目管理）。下面就对这次学习做个小结。</p>
+
+<h4>注：本书的部分文字和示例参考自《响应式Web设计实践》一书。</h4>
+
+<h3>1、页面布局</h3>
+
+<p>先抛开响应式的概念，来聊聊web页面的布局。根据比较权威的分类，布局可以分为4种类型：固定布局、流体布局、弹性布局、混合布局。</p>
+
+<h4>固定布局</h4>
+
+<p>在固定布局中，页面宽度会被指定为特定大小的像素。它是web设计中最常见的布局，所有的容器、元素几乎都被设定为固定的像素值。一旦确定了，整个站点的宽度及尺寸就确定了，也就是开发者帮用户做了决定。随着使用不同屏幕尺寸的终端来访问站点的用户越来越多，固定布局的弊端也愈加显现：出现滚动条。</p>
+
+<h4>流体布局</h4>
+
+<p>在流动布局中，度量的单位不再是像素，而是变成了百分比，这样可使页面具有可变的特性。站点可以根据浏览器的宽度自动调节自身宽度。但是，单独使用流动布局不足以在各个尺寸的终端上保持良好的效果。比如，有些文本的行宽在大屏幕上看起来会太宽，而在小屏幕上又看起来太窄。</p>
+
+<h4>弹性布局</h4>
+
+<p>弹性布局与流动布局类似，只是它们的度量单位不同，通常情况下它以<code>em</code>作为单位。弹性布局为设计师在排版方面提供了强大的控制权，随着用户增大或缩小字体，元素的宽度也会等比例地变化。但是，在弹性布局中也可能出现令人讨厌的水平滚动条。如果你把字体大小设置为16px，并把容器宽度设置为55em，那么就会在任何宽度小于880px（16x55）的屏幕中出现水平滚动条。</p>
+
+<h4>混合布局</h4>
+
+<p>混合布局是结合上面两种或两种以上的布局方式。例如，页面上需要有一个300px定宽的广告区域，而其余的列的宽度我们设置为百分比，这样就可以同时达到我们的要求。</p>
+
+<p>那么，哪种布局最具响应性？这取决于你的项目，因为每一种方法都有其优势和不足。大多数情况下，最佳答案是更具灵活性的那几种布局——流动布局、弹性布局或者混合布局。</p>
+
+<h3>2、字体大小</h3>
+
+<p>web上设置字体的大小，不外乎三种：像素（<code>px</code>）、<code>em</code>、百分比。像素就不说了。<code>em</code>是级联的，是以父元素的字体大小为基准进行设定的。这样有好处也有坏处。好处是，当需要调整页面的字体大小时，只需要改变根元素的字体大小，其余元素的字体就会自动进行调整。坏处时，当页面结构发生改变时，需要重新调整字体大小，如果页面变化很大，调整的工作量也会越大。百分比和<code>em</code>是一样的，以百分比为单位的字体也是级联的，因此理论上来讲，它和<code>em</code>没有太大的区别。另外一种极具潜力并兼具灵活性的单位是<code>rem</code>，它与<code>em</code>的区别在于：<code>rem</code>的大小只与根元素——Html元素——有关。不过它不兼容某些版本的浏览器（IE6、7、8等），关于<code>rem</code>可以参考<a href="http://ued.taobao.com/blog/2013/05/rem-font-size/" target="_blank">这篇文章</a>，由于篇幅问题就不展开讨论了，我是挺看好它的并且已经有同事在项目里使用了。</p>
+
+<h3>3、媒介查询</h3>
+
+<p>媒介查询可以让你在特定环境下查询到各种属性值——分辨率、色彩深度、高度和宽度等，从而决定应用什么样式。它是响应式设计里不可或缺的技术。</p>
+
+<h4>设备像素与css像素</h4>
+
+<p>这两个概念在我的<a href="http://luckydrq.com/#/2013/09/06/A-pixel-is-not-a-pixel.html" target="_blank">另一篇译文</a>里阐述了，它对理解视口至关重要。</p>
+
+<h4>视口</h4>
+
+<p>在桌面浏览器中，视口是个很简单的概念，即浏览器的可视区域，也指浏览器的宽度。而在移动浏览器中，有两种视口需要考虑：布局视口和视觉视口。根据我的理解，布局视口就是浏览器为页面指定的宽度，而视觉视口是指在设备屏幕能显示下的页面宽度。布局视口的值是不会变的（在iphone里是980px），与缩放是无关的。而视觉视口是会变化的，页面被放大时它就变小了（css像素变大），而页面被缩小时它就变大了，结合上面那篇关于设备像素与css像素的译文理解。</p>
+
+<h4>视口标签</h4>
+
+<p>在&lt;head&gt;里加上&lt;meta name=&ldquo;viewport&rdquo; content=&ldquo;xx=xxx&rdquo; &gt;元标签可以对视口进行设置。通常的做法是<code>content=&quot;width=device-width&quot;</code>，即将布局视口设置为设备宽度，这样页面不会被过分地缩放，使内容可以合适地显示在屏幕上。另外，user-scalable属性规定了是否允许用户缩放，书中认为这需要根据具体需求确定。在iOS设备里存在1个bug，如果把视口设置为任意大小并允许缩放，那么横屏之后页面会自动变大。禁用缩放，该问题则不会存在。个人认为，如果响应式做得足够周到，缩放就变得不是很必要，所以我倾向于禁用缩放。</p>
+
+<h4>媒介查询顺序</h4>
+
+<p>关于媒介查询的结构及用法，网上或书上很容易找到，在此略过。来看看媒介查询的顺序对我们的设计有怎样的影响。你在创建css时，需要选择哪种设计思想来建立响应式站点：是要从桌面端开始向下设计，还是从移动端开始向上设计。从桌面端向下设计，这种思想创建出的样式表通常会是这样的：</p>
+
+<pre><code>/* base styles */
+@media all and (max-width:768px) {
+  ...
+}
+@media all and (max-width: 320px){
+  ...
+}
+</code></pre>
+
+<p>这造成了一些问题：虽然目前移动设备对媒介查询的支持有所改善，但仍旧不够完善。在那些不支持媒介查询的移动浏览器上，这些页面就会很不友好甚至浏览体验很差。
+如果反过来，优先建立移动体验，然后针对大屏幕使用媒介查询对布局作出调整，那就可以在很大程度上规避上面所遇到的问题。一个采用从移动端向上的设计思想创建的样式表通常是这样的：</p>
+
+<pre><code>/* base styles,for the small-screen experience,go here */
+@media all and (max-width:320px) {
+  ...
+}
+@media all and (max-width: 768px){
+  ...
+}
+</code></pre>
+
+<p>能获得浏览器更好的支持并不是从移动端向上设计的唯一好处，优先创建移动体验还可以降低css文件的复杂性。例如，从桌面端向下设计需要以下代码：</p>
+
+<pre><code>aside{
+  display: table-cell;
+  width: 300px;
+}
+@media all and (max-width: 320px){
+  aside{
+    display: block;
+    width: 100%;
+  }
+}
+</code></pre>
+
+<p>而如果采用从移动端向上设计，样式表则会这样：</p>
+
+<pre><code>@media all and (min-width: 320px){
+  aside{
+    display: table-cell;
+    width: 300px;
+  }
+}
+</code></pre>
+
+<h4>确定断点</h4>
+
+<p>根据内容来决定应该在哪里设置断点以及需要设置多少断点才是更好的方法。之后你可以再通过缩放浏览器窗口来查看还有哪里有进一步改善的空间。为了能够确定断点，你可以将浏览器窗口缩放至300px左右（假设你的浏览器允许你缩放到这种程度），然后缓慢地拉宽窗口直到有些东西看起来需要进行一点润色。</p>
+
+<h3>响应式多媒体</h3>
+
+<p>性能在很多项目中扮演着重要的角色。如果在一个有350px宽的图片就足矣的设备上，却下载了一张624px宽的图片，无疑会严重降低页面的性能，这是个大问题。如果你说，ok，那在小屏幕就不显示图片了。于是，你通过媒介查询在小屏幕上设置图片<code>display:none</code>，问题还是一样存在。虽然在小屏幕设备上不会显示图片，但是浏览器仍然会去下载它。</p>
+
+<h4>响应式图片策略</h4>
+
+<p>1、通过脚本判断</p>
+
+<p>我们把页面上的img标签全部删除，然后通过使用html5的<code>data-</code>属性设置图片的src，例如：</p>
+
+<pre><code>&lt;ul class=&quot;slats&quot;&gt;
+  &lt;li data-src=&quot;images/ball.jpg&quot; class=&quot;group&quot;&gt;
+    &lt;a href=&quot;#&quot;&gt;&lt;h3&gt;Display image here&lt;/h3&gt;&lt;/a&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+</code></pre>
+
+<p>然后，你的javascript脚本可以这样写：</p>
+
+<pre><code>var lazy = document.querySelectorAll('[data-src]')
+for (var i = 0; i &lt; lazy.length; i++){
+  var source = lazy[i].getAttribute('data-src')
+  var img = new Image()
+  img.src = source
+  lazy[i].insertBefore(img, lazy[i].firstChild)
+}
+</code></pre>
+
+<p>以上通过javascript实现了图片的懒加载，但是还没有加入屏幕尺寸的判断逻辑，我们可以使用<code>matchMedia</code>方法来实现。<code>matchMedia</code>是javascript内部自带的方法，你可以将css媒介查询作为参数传递给它，它会返回相关媒介查询是否匹配的信息。具体来说，函数会返回一个MediaQueryList对象，该对象具有两个属性：<code>matches</code>和<code>media</code>。<code>matches</code>属性的值可以是true（如果媒介查询匹配）或者false（不匹配）。<code>media</code>属性的值就是你刚刚传递的参数，例如对于<code>window.matchMedia(&quot;(min-width:200px)&quot;)</code>来说media属性将会返回&rdquo;(min-width:200px)&ldquo;。目前支持<code>matchMedia()</code>方法的浏览器有： Chrome、Safari 5.1+、Firefox 9、Android 3+以及iOS5+。不过，Paul Irish为那些不支持该方法的浏览器创建了一个方便使用的polyfill。具体的代码如下：</p>
+
+<pre><code>if (window.matchMedia(&quot;(min-width: 37.5em)&quot;).matches) {
+  //load in the images
+  ...
+}
+</code></pre>
+
+<p>2、找服务器帮忙</p>
+
+<p>使用服务器检测技术来决定应该下载哪一张图片。目前一淘的响应式图片就是采用这种策略。但是，这种服务器端处理对未来也不是特别友好。随着请求你站点内容的设备的种类不断增长，维护所有设备的信息会变得越来越困难。</p>
+
+<p>3、Sencha.io Src</p>
+
+<p><code>Sencha.io Src</code>是最近似于即插即用型的响应式图片解决方案。要使用该服务，你只需在你的图片资源前面加上<code>Sencha.io Src</code>的链接即可：<code>http://src.sencha.io/http://mysite.com/images/ball.jpg</code>。<code>Sencha.io Src</code>会使用发起请求的设备的用户代理字符串来计算出设备屏幕的大小，然后根据该数值来缩放图片。而且，它也足够聪明，会缓存请求以便提高重复请求的效率。但是，如果你除了缩放图片，还想对图片进行重新裁剪，这就会有一些限制。</p>
+
+<p>4、自适应图片</p>
+
+<p>另一个近乎于即插即用的解决方案是由<code>Matt Wilcox</code>创建的自适应图片，它会先确定屏幕的大小，然后创建并缓存一张缩放后的图片。该方案是在服务器端维护一份断点配置。你需要在页面文档头部上加入以下一段代码：</p>
+
+<pre><code>document.cookie = 'resolution=' + Math.max(screen.width, screen.height) + ';path=/';
+</code></pre>
+
+<p>这行代码会获取屏幕的分辨率，并保存到cookie中。服务器获取到屏幕分辨率后，与配置进行对比，选出最合适的图片尺寸然后输出。图片创建过程是动态的，并辅以缓存以提高响应效率。</p>
+
+<h4>高分辨率屏幕</h4>
+
+<p>随着iPhone、iPad和MacBook Pro都采用了Retina屏幕（像素密度高达326ppi），意味着图片的显示效果将会异常的细致而清晰——如果图片为此做了优化。如果图片没有做优化，那么他们的显示效果将会是颗粒状并且是模糊的。为高分辨率屏幕创建图片就意味着要创建面积较大的图片，同时也就意味着图片的文件大小也会很大。为此，你可以为非Webkit浏览器使用<code>min-resolution</code>媒介查询，对于基于Webkit的浏览器，你必须使用<code>-webkit-min-device-pixel-ratio</code>媒介查询。</p>
+
+<h4>SVG</h4>
+
+<p>对于高分辨率屏幕上的显示问题，以及图片在不同尺寸屏幕上显示时的可伸缩问题，可以将可伸缩矢量图形（SVG）作为一个解决方案。</p>
+
+<h4>其他</h4>
+
+<p>视频与广告也是人们关心的重点。对于视频来说，使用固定比例的方法可以让你根据屏幕尺寸适当地缩放视频。与往常一样，要有意识地关注性能。最好能够为小屏幕用户显示视频链接，而为大屏幕用户直接显示嵌入的视频。对于广告来说，解决技术上的挑战并不困难。如果你是从自己系统中加载广告的，javascript或者一些响应式的html和css都可以为不同分辨率的屏幕上为改变广告提供帮助。更大的问题是如何把销售团队和第三方广告网络也拉上船。</p>
+
+<h3>RESS</h3>
+
+<p>####两种基本检测方法
+1、用户代理检测</p>
+
+<p>用户代理检测是通过检测浏览器的用户代理字符串（User Agent）来决定为设备提供哪种站点的方法，这一过程是在服务端完成的。用户代理的名声并不好，在很长一段时间内它都被人们误用或者滥用。那些没有受到青睐的浏览器可以“撒谎”，把它们自己的用户代理字符串修改为那些更受欢迎的浏览器的样子。目前，一淘的仍然使用基于用户代理的检测。</p>
+
+<p>2、功能检测</p>
+
+<p>很多脚本都有功能检测的功能，其中最为著名的就是Modernizr。它可以测试超过40种不同的功能，而且还能提供另外3样有助于开发的东西：1、一个包含测试结果的javascript对象。2、会在html元素中增加类名，以表明对于功能的支持情况。3、提供一个脚本加载器，可以有条件地加载polyfill。</p>
+
+<p>刚才说的<code>Modernizr</code>是在客户端进行检测，还有一个叫<code>modernizr-server</code>的代码库，可以在服务器端获取<code>Modernizr</code>检测结果，从而可以在页面被下载之前改变代码结构。使用时需要下载<code>modernizr-server</code>和最新的javascript库，并将下载好的javascript库命名为<code>modernizr.js</code>，然后放入<code>modernizr-server/modernizr.js/</code>文件夹下。原理是：当访问者第一次访问某一页面时会执行javascript的代码库并获取测试的结果。然后这些结果被添加到cookie中，而页面则会立刻重新加载。当下一次加载页面时，代码库会读取cookie中的信息，并且如果可以的话会将其置于会话变量中传回服务器。</p>
+
+<p>将用户代理检测和功能检测相结合，将服务器端检测和响应式设计相结合，被称为RESS。</p>
+
+<h3>计划、设计流程</h3>
+
+<p>毫无疑问，响应式设计是一种强大的技术，但它不是银弹。最大化你站点的价值需要花费大量的时间并作出谨慎的决定。你必须将响应式设计整合到项目的计划中去。研究你的分析数据，但是要记住它们也会说谎。仔细考虑一下你的内容，虽然不需要在设计和开发前就把内容最终确定下来，但是你至少应该知道内容的结构。</p>
+
+<p>响应式设计远远不只是一种简单的策略，它为Web项目带来的是一整套全新的、完整的方法，也是一种新的、可以更好地利用这一平台的工作流程。新流程必须是敏捷而灵活的。要去拥抱Web的交互本性，并开始在浏览器中创建模型。平面图片只能描绘出站点有限的一部分，它们没有能力描绘出用户与网站交互时设计看起来会是什么样子，而且还使得交付变得复杂。</p>
+
+    <hr>
+    <div class="pagination">
+      <ul>
+        <ul>
+          
+          
+            <li class="prev disabled"><a>&larr; Previous</a></li>
+          
+
+            <li><a href="/archive">Archive</a></li>
+
+          
+            <li class="next"><a href="/tranlation/%E8%AF%91-%E6%AD%A4%E5%83%8F%E7%B4%A0%E9%9D%9E%E5%BD%BC%E5%83%8F%E7%B4%A0/" title="译:此像素非彼像素">Next &rarr;</a></li>
+          
+          
+        </ul>
+      </ul>
+    </div>
+    <hr>
+    
+<div id="disqus_thread"></div>
+<script>
+    var disqus_developer = 1;
+    var disqus_shortname = 'jekyllbootstrap'; // required: replace example with your forum shortname
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+  </div>
+  
+  <div class="span4">
+    <h4>Published</h4>
+    <div class="date"><span>2013-09-09</span></div>
+    <br>
+    <h4>Categories</h4>
+    <ul class="tag_box">
+    
+      <li>
+  <a href="/categories/#web-ref">web <span>2</span></a>
+</li>
+    
+    </ul>
+    <br>
+    <h4>Tags</h4>
+    <ul class="tag_box">
+    
+      <li>
+  <a href="/tags/#responsive-ref">responsive <span>1</span></a>
+</li>
+    
+    </ul>
+  </div>
+</div>
+
+      </div>
+
+      <footer>
+        <p>&copy; Ruoqi Deng 2013 
+          with help from <a href="http://github.com/wendal/gor" target="_blank" title="Gor -- Fast Blog">Gor</a>
+          and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
+		  and Idea from <a href="http://ruhoh.com" target="_blank" title="The Definitive Technical Blogging Framework">ruhoh</a>
+        </p>
+      </footer>
+
+    </div> <!-- /container -->
+
+    
+<script src="//cdnjscn.b0.upaiyun.com/libs/prettify/r298/prettify.min.js"></script>
+<script>
+  var pres = document.getElementsByTagName("pre");
+  for (var i=0; i < pres.length; ++i) {
+    pres[i].className = "prettyprint linenums";
+  }
+  prettyPrint();
+</script>
+
+    
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  var pluginUrl = '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+  _gaq.push(['_require', 'inpage_linkid', pluginUrl]);
+  _gaq.push(['_setAccount', 'UA-42808195-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+  </body>
+</html>

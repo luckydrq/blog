@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Generator基础篇</title>
+  
+    <meta name="author" content="Ruoqi Deng">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le styles -->
+    <link href="/assets/twitter/stylesheets/bootstrap.min.css" type="text/css" rel="stylesheet" media="all">
+<link href="/assets/twitter/stylesheets/style.css" type="text/css" rel="stylesheet" media="all">
+<link href="/assets/twitter/widgets/google_prettify/stylesheets/twitter-bootstrap.css" type="text/css" rel="stylesheet" media="all">
+ 
+
+    <!-- Le fav and touch icons -->
+  <!-- Update these with your own images
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+  -->
+  </head>
+
+  <body>
+
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="brand" href="/">Lucky Blog</a>
+          <ul class="nav">
+            
+              
+
+
+  <li><a href="/archive">Archive</a></li>
+
+
+            
+              
+
+
+  <li><a href="/tags">Tags</a></li>
+
+
+            
+              
+
+
+  <li><a href="/categories">Categories</a></li>
+
+
+            
+              
+
+
+  <li><a href="/pages">Pages</a></li>
+
+
+            
+              
+
+
+  <li><a href="/about">About Me</a></li>
+
+
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="content">
+        <div class="page-header">
+  <h1>Generator基础篇 </h1>
+</div>
+
+<div class="row">
+  <div class="span8">
+    <p>众所周知，<a href="http://wiki.ecmascript.org/doku.php?id=harmony:generators">Generator</a>是<code>ES6</code>的新特性，通过<code>yield</code>关键字，可以让函数的执行流挂起。本文对<code>Generator</code>的基本特性进行介绍，若
+有错误请指正。(注：本文的代码在node v0.11.9下运行，node下的实现和标准有些偏差，文中将会进行注释)</p>
+
+<h3>Generator和Generator Object</h3>
+
+<h4>什么是Generator?</h4>
+
+<pre><code class="javascript">  function *gen(){
+    yield 1;
+  };
+
+  console.log(typeof gen);           // function
+</code></pre>
+
+<p>这样就完成了一个<code>Generator</code>的声明，它是一个函数。</p>
+
+<p>如何判断一个函数是否<code>Generator</code>？</p>
+
+<pre><code class="javascript">  function isGen(fn) {
+    return 'function' === typeof fn
+          &amp;&amp; fn.constructor.name === 'GeneratorFunction';
+  }
+</code></pre>
+
+<h4>什么是Generator Object？</h4>
+
+<pre><code class="javascript">  function *gen(){}
+
+  var g = gen();
+  console.log(typeof g);  // object
+</code></pre>
+
+<p><code>g</code>是一个<code>Generator Object</code>，它是一个对象，<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/New_in_JavaScript/1.7#Generators">MDN</a>上也称它为<code>generator-iterator</code>。</p>
+
+<h3>Hello World</h3>
+
+<pre><code class="javascript">  function *gen() {
+    yield 'Hello';
+    yield 'World';
+  }
+
+  var g = gen();
+  console.log(g.next());    // {value: 'Hello', done: false}
+  console.log(g.next());    // {value: 'World', done: false}
+  console.log(g.next());    // {value: undefined, done: true}
+  console.log(g.next());    // Error: Generator has already finished
+</code></pre>
+
+<p><code>gen()</code>生成一个<code>Generator Object</code>并赋值给<code>g</code>，此时函数体尚未开始执行。
+第一次调用<code>g.next</code>时，函数体开始执行，直到遇到第一个<code>yield</code>语句，执行流挂起(suspend)，同时返回一个<code>Object</code>对象。
+这个对象有<code>value</code>和<code>done</code>两个key，<code>value</code>表示<code>yield</code>语句后面的表达式的值（&rsquo;hello&rsquo;），<code>done</code>是个布尔值，表示函数体是否已经执行结束。
+再次调用<code>g.next</code>时，执行流在挂起的地方继续执行，直到遇到第2个<code>yield</code>，依次类推。。
+经过2次调用，函数体已经执行到了末尾，此时函数处于挂起状态，还没有跳出，因此<code>done</code>的值仍是<code>false</code>。
+再次调用<code>g.next</code>，（函数体）才执行完毕。这里值得注意的是，每次调用<code>g.next</code>，执行流在原来挂起的地方继续执行，此时函数的参数、变量都保存着上一次执行的状态和值，就好像函数从未挂起或跳出过。</p>
+
+<h3>一个经典的例子</h3>
+
+<p>引用<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/New_in_JavaScript/1.7#Generators">MDN</a>上的一个示例：斐波那契数列的生成。</p>
+
+<pre><code class="javascript">  function do_callback(num) {
+    console.log(num);
+  }
+
+  function fib(done) {
+    var i = 0, j = 1, n = 0;
+    while (n &lt; 10) {
+      done(i);
+      var t = i;
+      i = j;
+      j += t;
+      n++;
+    }
+  }
+
+  fib(do_callback);
+</code></pre>
+
+<p>以上代码与MDN上实现的稍有不同，但意思是一样的：每次迭代的值都会传给一个回调函数。
+这样看起来很正常，会打印出数列的前10个数字。</p>
+
+<p>一个更好的实现：</p>
+
+<pre><code class="javascript">  function *fib() {
+    var i = 0, j = 1;
+    while (true) {
+      yield i;
+      var t = i;
+      i = j;
+      j += t;
+    }
+  }
+
+  var g = fib();
+  for (var i = 0; i &lt; 10; i++) {
+    console.log(g.next().value);
+  }
+</code></pre>
+
+<p>为什么是更好的实现？我有两个理由：</p>
+
+<p>1、执行流更清晰。我们的最终目的是要打印出数列，而<code>fib</code>只是在这个过程中的一个子过程。</p>
+
+<p>2、更加灵活。通过<code>Generator</code>，我们可以随时继续或停止数列的生成。而第一种方式，则需要给<code>fib</code>函数增加一个参数以标识所需生成的数列长度，增加了
+代码的复杂性。</p>
+
+<h3>还有什么？</h3>
+
+<p>在<a href="http://wiki.ecmascript.org/doku.php?id=harmony:generators">规范</a>里，一个<code>Generator Object</code>有4个属性：
+<code>send</code>、<code>next</code>、<code>throw</code>、<code>close</code>。<code>next</code>相信大家已经很熟了，下面我们就来八一八其他3个属性。</p>
+
+<h4>.send()</h4>
+
+<p><code>send</code>方法允许指定一个值，作为上一次<code>yield</code>的返回值。啥意思呢？</p>
+
+<pre><code class="javascript">  function *gen() {
+    var x = yield 1;
+    yield x;
+  }
+
+  var g = gen();
+  console.log(g.next().value);  // 1
+  console.log(g.send(2).value); // 2, not 1!
+
+</code></pre>
+
+<p><em>需要注意的是，这段代码在node v0.11.9下跑不通，因为v8并没有实现<a href="http://stackoverflow.com/questions/20890031/restarting-a-generator-in-javascript">send方法</a>，但是通过调用<code>next</code>方法可以实现一样的效果</em></p>
+
+<pre><code class="javascript">  // node 下可以用`next`方法代替`send`
+
+  function *gen() {
+    var x = yield 1;
+    yield x;
+  }
+
+  var g = gen();
+  console.log(g.next().value);  // 1
+  console.log(g.next(2).value); // 2, not 1!
+
+</code></pre>
+
+<h4>.throw()</h4>
+
+<p><code>throw</code>方法其实和我们熟知的javascript异常抛错是一样的。</p>
+
+<pre><code>  function *gen() {}
+
+  try {
+    var g = gen();
+    g.throw('I got you!');
+  } catch(e) {
+    console.log(e);  // I got you!
+  }
+</code></pre>
+
+<h4>.close()</h4>
+
+<p><code>close</code>方法在node下也没有实现，并且没有替代的方案。
+根据<a href="http://wiki.ecmascript.org/doku.php?id=harmony:generators">规范</a>的描述，调用<code>close</code>方法可以直接以当前的<code>value</code>作为<code>Generator</code>的返回值。
+虽然容易理解，但是没有看到相关的范例，所以就给出示例代码了。</p>
+
+<h3>代理的玩法(delegating yield)</h3>
+
+<p>通过前面的一些例子，我们已经知道，调用<code>next</code>方法就可以得到相应的值，而这个相应的值就是<code>yield</code>后面的常量或表达式的值。
+如果<code>yield</code>后面跟着的是一个<code>Generator Object</code>呢？</p>
+
+<pre><code class="javascript">  function *gen() {
+    yield 1;
+    yield 2;
+    yield* gen2();
+  }
+
+  function *gen2() {
+    yield 3;
+    yield 4;
+  }
+
+  var g = gen();
+  console.log(g.next()); // { value: 1, done: false }
+  console.log(g.next()); // { value: 2, done: false }
+  console.log(g.next()); // { value: 3, done: false }
+  console.log(g.next()); // { value: 4, done: false }
+  console.log(g.next()); // { value: undefined, done: true }
+</code></pre>
+
+<p>到现在，我们还是第一次碰到<code>yield*</code>。那么之前的问题的表述就有了问题，应该是<code>yield*</code>后面跟着一个<code>Generator Object</code>。
+从代码里不难看出，<code>g.next</code>的返回值会被代理到<code>gen2().next</code>，直到<code>gen2</code>的迭代结束。这个特性和函数的嵌套调用很像，但<code>Generator</code>本身也是函数，不是吗？
+真是“熟悉的陌生人”。</p>
+
+<h4>node下怎么玩？</h4>
+
+<h4>走正门</h4>
+
+<p>要使用<code>Generator</code>特性，需要：</p>
+
+<p>1、Node版本&gt;=0.11.9</p>
+
+<p>2、启用<code>harmony</code>选项：<code>node --harmony</code> or <code>node --harmony_generators</code></p>
+
+<h4>走偏门</h4>
+
+<p>如果你的node环境不满足“走正门”的条件，可以使用<code>gnode</code>模块：</p>
+
+<p>1、在你的项目中<code>npm install gnode</code>。</p>
+
+<p>2、在入口文件（例如：<code>index.js</code>）添加如下代码：</p>
+
+<pre><code class="javascript">  // require hack
+  require('gnode');
+  
+  // go on
+  require('lib/app.js');
+</code></pre>
+
+<p><em>注意：入口文件不应包含<code>Generator</code>的相关定义，否则在预解析阶段就会报错，把代码逻辑移到另外的文件（例如：app.js）中</em></p>
+
+<h3>To be continued&hellip;</h3>
+
+    <hr>
+    <div class="pagination">
+      <ul>
+        <ul>
+          
+            <li class="prev"><a href="/2014-10-14/cluster-analyse-one" title="Cluster机制剖析1——进程复制">&larr; Previous</a></li>
+          
+          
+
+            <li><a href="/archive">Archive</a></li>
+
+          
+            <li class="next"><a href="/2014-06-02/pi-blog" title="树莓派上搭建blog">Next &rarr;</a></li>
+          
+          
+        </ul>
+      </ul>
+    </div>
+    <hr>
+    
+<div id="disqus_thread"></div>
+<script>
+    var disqus_developer = 1;
+    var disqus_shortname = 'jekyllbootstrap'; // required: replace example with your forum shortname
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+  </div>
+  
+  <div class="span4">
+    <h4>Published</h4>
+    <div class="date"><span>2014-07-13</span></div>
+    <br>
+    <h4>Categories</h4>
+    <ul class="tag_box">
+    
+      <li>
+  <a href="/categories/#js-ref">js <span>2</span></a>
+</li>
+    
+    </ul>
+    <br>
+    <h4>Tags</h4>
+    <ul class="tag_box">
+    
+      <li>
+  <a href="/tags/#node-ref">node <span>2</span></a>
+</li>
+    
+    </ul>
+  </div>
+</div>
+
+      </div>
+
+      <footer>
+        <p>&copy; Ruoqi Deng 2013 
+          with help from <a href="http://github.com/wendal/gor" target="_blank" title="Gor -- Fast Blog">Gor</a>
+          and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
+		  and Idea from <a href="http://ruhoh.com" target="_blank" title="The Definitive Technical Blogging Framework">ruhoh</a>
+        </p>
+      </footer>
+
+    </div> <!-- /container -->
+
+    
+<script src="//cdnjscn.b0.upaiyun.com/libs/prettify/r298/prettify.min.js"></script>
+<script>
+  var pres = document.getElementsByTagName("pre");
+  for (var i=0; i < pres.length; ++i) {
+    pres[i].className = "prettyprint linenums";
+  }
+  prettyPrint();
+</script>
+
+    
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  var pluginUrl = '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+  _gaq.push(['_require', 'inpage_linkid', pluginUrl]);
+  _gaq.push(['_setAccount', 'UA-42808195-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+  </body>
+</html>

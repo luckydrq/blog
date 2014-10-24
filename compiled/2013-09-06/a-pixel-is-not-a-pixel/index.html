@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>译:此像素非彼像素</title>
+  
+    <meta name="author" content="Ruoqi Deng">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le styles -->
+    <link href="/assets/twitter/stylesheets/bootstrap.min.css" type="text/css" rel="stylesheet" media="all">
+<link href="/assets/twitter/stylesheets/style.css" type="text/css" rel="stylesheet" media="all">
+<link href="/assets/twitter/widgets/google_prettify/stylesheets/twitter-bootstrap.css" type="text/css" rel="stylesheet" media="all">
+ 
+
+    <!-- Le fav and touch icons -->
+  <!-- Update these with your own images
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+  -->
+  </head>
+
+  <body>
+
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="brand" href="/">Lucky Blog</a>
+          <ul class="nav">
+            
+              
+
+
+  <li><a href="/archive">Archive</a></li>
+
+
+            
+              
+
+
+  <li><a href="/tags">Tags</a></li>
+
+
+            
+              
+
+
+  <li><a href="/categories">Categories</a></li>
+
+
+            
+              
+
+
+  <li><a href="/pages">Pages</a></li>
+
+
+            
+              
+
+
+  <li><a href="/about">About Me</a></li>
+
+
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="content">
+        <div class="page-header">
+  <h1>译:此像素非彼像素 </h1>
+</div>
+
+<div class="row">
+  <div class="span8">
+    <p>译者：这是篇关于<code>css像素</code>和<code>设备像素</code>的老文章，但我最近才有幸拜读，不得不感叹下自己学艺不精。之前做响应式设计，也没有搞清楚两者之间的关系，直到看了<a href="http://www.quirksmode.org/blog/archives/2010/04/a_pixel_is_not.html" title="原文地址" target="_blank">这篇文章</a>才逐步理清头绪，现在翻译出来做为学习笔记。如果有翻译得不对的地方或者某处翻译你觉得不爽有更好的建议，请给我留言。</p>
+
+<h3>此像素非彼像素</h3>
+
+<p>昨天John Gruber在他的文章中提到即将发布的新一代iphone升级了分辨率（达到960x640，而现有的只有480x320），并表达了对此次升级的疑惑。同时，他还想知道这会对web开发者们造成怎样的影响。</p>
+
+<p>目前，我正在深入研究“移动电话宽度与高度的跨浏览器表现”，并且有充分理由得出这样的结论，99%的情况下这不会对web开发者造成任何影响。</p>
+
+<p>剩下的1%是非常棘手的，但我希望apple能够通过插入一个像素中间层来解决这个问题。(John指出这样的中间层在Android设备上已经存在了。)</p>
+
+<p>在我们开始（讨论）之前，先说明一下：我基本上忽略了设备屏幕尺寸，因为它们对web开发者来说是不重要的。而且，我也不想讨论显示细节、像素密度以及其他一些复杂概念。因此，可能我在措辞中使用了错误的术语，在这里提前说声抱歉。</p>
+
+<h3>Web开发者需要什么？</h3>
+
+<p>当然，我知道web开发者对什么感兴趣。他们需要：css像素，也就是css里声明的像素，比如<code>width:300px</code>或者<code>font-size:14px</code>。</p>
+
+<p>这些像素与设备的像素密度无关，甚至与传说中即将来临的中间层也是无关的。它们本质上是专门为我们web开发者创造的抽象概念。</p>
+
+<p>这个是很容易解释的，我们来考虑一下缩放操作。如果一个用户（把页面）放大了，对于一个设定为<code>width:300px</code>的元素，会在屏幕上占据越来越大的空间。如果用设备（物理）像素来测量，这个值是越来越大的。但是，在<code>css像素</code>里，<code>width</code>仍然是300px，这是通过扩展css像素的宽度来达到放大的效果。</p>
+
+<p>当缩放因子为100%时，1个<code>css像素</code>的大小与1个<code>设备像素</code>的大小是相等的（尽管设备的实际像素会被未来的中间层提供的像素所取代）。如下图所示：
+<img src="/assets/media/images/2013_09_06/csspixels_100.gif" />
+这可能看不出什么，因为1个css像素精确地覆盖了1个设备像素。（可能我应该提醒你“缩放100%”在web开发中是没有意义的，缩放等级对我们来说不重要，真正重要的是我们需要知道当前的屏幕能显示多少css像素。）</p>
+
+<p>下面的两张图片解释了当用户进行缩放时发生了什么。第一张展示了当用户缩小（页面）时，设备像素（深蓝色背景的格子）与css像素（半透明前背景的格子）的情形。css像素变得更小了，1个设备像素可以覆盖多个css像素。第二张图展示了当用户放大（页面）时，设备像素与css像素的情形。现在1个css像素可以覆盖多个设备像素了。
+<div class="inline-container">
+<img src="/assets/media/images/2013_09_06/csspixels_out.gif" />
+<img src="/assets/media/images/2013_09_06/csspixels_in.gif" />
+</div></p>
+
+<p>这样我们的<code>width:300px</code>的元素，宽度永远是300个css像素，而这相当于多少个设备像素就取决于当前的缩放因子了。（在iphone上，你可以通过<code>screen.width</code>除以<code>window.innerWidth</code>计算得出缩放因子。这个对于浏览器是普遍不兼容的，除非在不久的将来有一份全面而完备的报告。此外，作为一个web开发者，你不会对影响因子感兴趣，而是屏幕能够显示多少css像素。）</p>
+
+<p>这个机制不会变，如果变了，那么所有针对iphone做优化的那些站点，都会瞬间变得非常的不友好，而这是apple不惜一切代价要避免的。</p>
+
+<p>因此，对于一个被全面缩小的网站，它将仍然显示在980 css像素宽度的屏幕里，而这相当于多少设备像素对我们来说就不重要了。（译：如果没有设置intial-scale=1，iphone会对网页进行缩放以至于能够在屏幕里显示整个网页。）</p>
+
+<h3>两种策略</h3>
+
+<p>然而，可以有两种策略：<code>device-width</code>媒介查询和<code>&lt;meta name=&quot;viewport&quot; width=&quot;device-width&quot;&gt;</code>标签(Note：经过译者测试，width写法有所改动，应放在<code>content</code>属性里定义，如：<code>content=&quot;width=device-width&quot;</code>)。两种都采用的是设备像素，而非css像素，因为它们报告的是网页的上下文（载体），而不是内在的css属性。</p>
+
+<h4>媒介查询</h4>
+
+<pre><code class="device-width```媒介查询是以设备像素为度量单位来测量设备的宽度。而```width```媒介查询则是以css像素为度量单位测量整个页面的宽度，在iphone上它至少是980px，原因我将在后面解释。">&lt;img src=&quot;/assets/media/images/2013_09_06/mobile_mediaqueries.jpg&quot; /&gt;
+
+`device-width`是像这样工作的：
+</code></pre>
+
+<p>div.sidebar {
+  width: 300px;
+}</p>
+
+<p>@media all and (max-device-width: 320px) {
+  //当设备屏幕的宽度小于320px时，该样式就生效了。
+  div.sidebar {
+    width: 100px;
+  }
+}
+</p>
+
+<p>现在sidebar的宽度是300个css像素单位，当设备的宽度是320px或更小时，它（sidebar）的宽度就会变成100个css像素单位。（能跟得上吗？这的确有些复杂）</p>
+
+<p>顺便说一下，理论上你可以以厘米或者英寸为单位做媒介查询（<code>@media all and (max-device-width: 9cm)</code>）。不幸的是，它看起来并没有被很好地支持，甚至是iphone。这里的问题是，像英寸这样的物理单位经常会被转换成（css）像素。至今我测试过的所有浏览器上，<code>width: 1in</code>等同于96像素（这实在是太少了）。所以，这些（以英寸等为单位的）媒介查询是不可靠的。</p>
+
+<h4><code>meta</code>标签</h4>
+
+<p>一般来说，<code>&lt;meta name=&quot;viewport&quot; width=&quot;device-width&quot;&gt;</code>甚至更有用。这个标签，最初是由apple创造的，但同时也被许多移动浏览器支持，实际上是用布局视口（layout viewport）来精确地适配设备屏幕。</p>
+
+<p>那么，什么是布局视口呢？它是一个区域（css像素），是浏览器通过计算那些宽度被设置成百分比的元素的尺寸而得出的，比如<code>div.sidebar {width: 20%}</code>。它通常比设备屏幕的宽度要大得多：iphone上是980px，Opera上是850px，Android上是800px，等等。
+<img src="/assets/media/images/2013_09_06/mobile_layoutviewport.jpg" /></p>
+
+<p>如果你加上<code>&lt;meta name=&quot;viewport&quot; width=&quot;device-width&quot;&gt;</code>，布局视口的宽度就被限制为设备宽度（设备像素）。在iphone上，这个值是320px。</p>
+
+<p>如果你的页面足够窄，窄到当前的屏幕能够显示下，那问题就比较要紧了。去掉页面上任何的css声明以及meta标签。可以发现，它横跨了整个布局视口的可用宽度。
+<img src="/assets/media/images/2013_09_06/mq_none.jpg" /></p>
+
+<p>这恐怕不是你想要的。你想要文本在屏幕上合适地展现。这就是<code>&lt;meta name=&quot;viewport&quot; width=&quot;device-width&quot;&gt;</code>的任务。当你（在页面上）添加它，整个布局视口就会被限制（iphone上是320px），并且文本也可以合适地展示了。
+<img src="/assets/media/images/2013_09_06/mq_yes.jpg" /></p>
+
+<h3>Apple的改变</h3>
+
+<p>现在，apple的分辨率变化会给<code>device-width</code>媒介查询和<code>meta</code>标签带来怎样的影响呢？当然我不能肯定，但我希望对于web开发者来说没有任何变化。</p>
+
+<h4>meta标签</h4>
+
+<p><code>meta</code>标签是最容易解释的。apple刻意发明了它，为的是让页面内容能够很好地显示在iphone上，并且和广大开发者们一起推动它的发展。这意味着，要改变从<code>meta</code>标签读取的设备宽度的大小，是十分困难的并且代价也是承受不起的。</p>
+
+<p>事实上，Nexus One已经为apple开辟了一条可以遵循的先河。它的官方设备尺寸是480px（竖屏模式下）。但是，当你应用了<code>meta</code>标签后，它的屏幕尺寸似乎就变成了320px，官方尺寸的2/3。</p>
+
+<p>如果我的理解没有错，这就是John Gruber在谈论Nexus的显示时所说的“丢弃了亚像素(sub-pixel)”，从而导致总共减少了1/3的像素。这使得Nexus精确地适配了<code>meta</code>标签（Note: 480 * <sup>2</sup>&frasl;<sub>3</sub> = 320）</p>
+
+<p>因此，基本上，Google已经插入了一个叫做<code>dips</code>的中间层，从而做到了设备尺寸独立。它介于web开发者使用的css像素宽度与官方设备尺寸之间。</p>
+
+<p>我希望新一代iphone能够应用Nexus的这种技术，即当应用<code>meta</code>标签查询设备尺寸时报告的是320px（也就是正式分辨率的一半），它之所以是一半而不是2/3，是因为新一代iphone的像素密度要高于Nexus(或其他的一些原因)。</p>
+
+<h4>媒介查询</h4>
+
+<p>现在，<code>device-width</code>媒介查询成了唯一的问题。在Nexus上，它（仍然）以480px作为设备尺寸，尽管事实上（前面已经提到），320px是更合适的结果。我们将看看apple会如何处理。</p>
+
+<p>最根本的问题是dips是否也会被用作媒介查询。总体来说，我想说我们很希望这样。正式的设备尺寸对web开发者来说不重要：我们想知道有多少内容能显示在屏幕上，而且目前看来dips是最合适的。</p>
+
+<p>不幸的是，Nexus目前也没有实现（dips用于媒介查询），就媒介查询来说，<code>device-width</code>仍然是480px而不是320px。但是，也许apple能够为广大web开发者解决这个问题。</p>
+
+<p>因此，对于普通站点以及那些应用meta标签的站点而言，解决方案已经非常明了了。而对于那些需要用到媒介查询的站点，似乎还不够明了。</p>
+
+<p>敬请关注吧。</p>
+
+    <hr>
+    <div class="pagination">
+      <ul>
+        <ul>
+          
+            <li class="prev"><a href="/2013-09-09/responsive-web-design" title="响应式设计小结">&larr; Previous</a></li>
+          
+          
+
+            <li><a href="/archive">Archive</a></li>
+
+          
+            <li class="next"><a href="/2013-09-01/car-throttle-clean" title="自己动手清洗节气门">Next &rarr;</a></li>
+          
+          
+        </ul>
+      </ul>
+    </div>
+    <hr>
+    
+<div id="disqus_thread"></div>
+<script>
+    var disqus_developer = 1;
+    var disqus_shortname = 'jekyllbootstrap'; // required: replace example with your forum shortname
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+  </div>
+  
+  <div class="span4">
+    <h4>Published</h4>
+    <div class="date"><span>2013-09-06</span></div>
+    <br>
+    <h4>Categories</h4>
+    <ul class="tag_box">
+    
+      <li>
+  <a href="/categories/#translation-ref">translation <span>1</span></a>
+</li>
+    
+      <li>
+  <a href="/categories/#web-ref">web <span>2</span></a>
+</li>
+    
+    </ul>
+    <br>
+    <h4>Tags</h4>
+    <ul class="tag_box">
+    
+      <li>
+  <a href="/tags/#css-ref">css <span>1</span></a>
+</li>
+    
+    </ul>
+  </div>
+</div>
+
+      </div>
+
+      <footer>
+        <p>&copy; Ruoqi Deng 2013 
+          with help from <a href="http://github.com/wendal/gor" target="_blank" title="Gor -- Fast Blog">Gor</a>
+          and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
+		  and Idea from <a href="http://ruhoh.com" target="_blank" title="The Definitive Technical Blogging Framework">ruhoh</a>
+        </p>
+      </footer>
+
+    </div> <!-- /container -->
+
+    
+<script src="//cdnjscn.b0.upaiyun.com/libs/prettify/r298/prettify.min.js"></script>
+<script>
+  var pres = document.getElementsByTagName("pre");
+  for (var i=0; i < pres.length; ++i) {
+    pres[i].className = "prettyprint linenums";
+  }
+  prettyPrint();
+</script>
+
+    
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  var pluginUrl = '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+  _gaq.push(['_require', 'inpage_linkid', pluginUrl]);
+  _gaq.push(['_setAccount', 'UA-42808195-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+  </body>
+</html>

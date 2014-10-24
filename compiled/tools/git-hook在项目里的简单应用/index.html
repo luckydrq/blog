@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>git hook在项目里的简单应用</title>
+  
+    <meta name="author" content="Ruoqi Deng">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le styles -->
+    <link href="/assets/twitter/stylesheets/bootstrap.min.css" type="text/css" rel="stylesheet" media="all">
+<link href="/assets/twitter/stylesheets/style.css" type="text/css" rel="stylesheet" media="all">
+<link href="/assets/twitter/widgets/google_prettify/stylesheets/twitter-bootstrap.css" type="text/css" rel="stylesheet" media="all">
+ 
+
+    <!-- Le fav and touch icons -->
+  <!-- Update these with your own images
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+  -->
+  </head>
+
+  <body>
+
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="brand" href="/">Lucky Blog</a>
+          <ul class="nav">
+            
+              
+
+
+  <li><a href="/archive">Archive</a></li>
+
+
+            
+              
+
+
+  <li><a href="/tags">Tags</a></li>
+
+
+            
+              
+
+
+  <li><a href="/categories">Categories</a></li>
+
+
+            
+              
+
+
+  <li><a href="/pages">Pages</a></li>
+
+
+            
+              
+
+
+  <li><a href="/about">About Me</a></li>
+
+
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="content">
+        <div class="page-header">
+  <h1>git hook在项目里的简单应用 </h1>
+</div>
+
+<div class="row">
+  <div class="span8">
+    <p>上一篇关于<code>git</code>的博文扯到了<code>git hook</code>，一直想用它搞点实用的事情出来，正好最近的项目处于预发布之前的最后测试阶段，页面上的css文件地址换成了cdn地址，这样带来的麻烦就是如果css要修改，必须要重新发布到cdn上。为了偷懒，就想每次git commit成功后执行hook脚本自动完成发布cdn的事情。</p>
+
+<p>关于<code>git hook</code>，网上有一大堆介绍，可以看看<a href="http://blog.jobbole.com/26131/" target="_blank">这里</a>。总得说来，<code>git hook</code>可以分为客户端<code>hook</code>和服务器端<code>hook</code>。客户端<code>hook</code>用于客户端的操作，如提交和合并。服务器端<code>hook</code>用于git服务器端的操作，如接收被推送的提交。在<code>git</code>操作周期的不同阶段，会触发相应的<code>hook</code>（如果你写了）。所有的这些脚本，都存放在你的工程的<code>Git</code>目录下，具体路径为<code>.git/hooks/</code>。执行<code>ls .git/hooks</code>查看一下，会发现有很多以<code>.sample</code>结尾的文件，再看看这些文件内容，全都是shell脚本。这些文件是<code>git</code>为你预置的一些<code>hook</code>脚本，只要把文件的后缀名<code>.sample</code>去掉，脚本就生效了。</p>
+
+<p>这里面的大多数<code>hook</code>我都没有用过，就只说说项目里的用法。经过尝试，最终选用了<code>commit-msg</code>和<code>post-commit</code>这两个客户端<code>hook</code>。这里可能有人要问，不就是发个cdn么，这么屁大点事还要用两个脚本？对于这里的逻辑，我认为是这样的：1、只有当本次提交涉及修改的文件里包括我想要的css文件时，才能发布cdn。2、只有当提交操作完成（即commit成功），再做发布cdn的操作。经过试验发现，在提交操作完成后，找不到合适的办法获取本次提交的修改文件列表，这样就无法知道本次提交是否涉及css文件。这里可能又有人会说，干脆么每次提交都整一次发布好了哇。可以是可以，但是有点不爽啊。。。<code>commit-msg</code>是在提交之前调用的，如果脚本返回非零的值，那么本次提交将会被取消。<code>post-commit</code>是在提交之后调用的，如果提交不成功，那么它就不会执行。对于检测是否存在目标的css文件，我用了比较土的办法，在<code>commit-msg</code>脚本里，检查修改文件里是否存在目标文件，如果存在，就创建一个空文件A。提交完成后，在<code>post-commit</code>里检查空文件A是否存在，如果存在，就执行发布cdn操作。下面就把代码贴出来：</p>
+
+<p><code>commit-msg</code>:</p>
+
+<pre><code>#!/bin/sh
+files=`git diff --cached --name-only`
+EXTRA_File=&quot;$EXTRA$&quot;
+
+if [ -f $EXTRA_File ]; then
+  rm $EXTRA_File
+fi
+
+for file in $files; do
+  #echo $file
+
+  if [ &quot;$file&quot; == &quot;public/index.css&quot; ]; then
+    touch $EXTRA_File
+    break
+  fi
+done
+</code></pre>
+
+<p><code>post-commit</code>:</p>
+
+<pre><code>#!/bin/sh
+EXTRA_File=&quot;$EXTRA$&quot;
+
+if [ -f $EXTRA_File ]; then
+  cd ~/workspace/mosaic-demo/public/mm
+  sh deploy.sh
+  rm $EXTRA_File
+fi
+</code></pre>
+
+<p><code>deploy.sh</code>封装了css压缩、上传cdn的操作，也就是你想要做的操作，也贴出来走完整个流程。不过主要就是上面的两段脚本，很简单吧！如果有朋友有更好的办法，欢迎拍砖！！！</p>
+
+<p><code>deploy.sh</code>:</p>
+
+<pre><code>#!/bin/sh
+cp ../index.css ./build/index.css
+cd ../../
+grunt
+cd public/mm
+echo 'uploading css to cdn...'
+node deploy.js
+echo 'uploading success!'
+</code></pre>
+
+    <hr>
+    <div class="pagination">
+      <ul>
+        <ul>
+          
+            <li class="prev"><a href="/life/%E8%87%AA%E5%B7%B1%E5%8A%A8%E6%89%8B%E6%B8%85%E6%B4%97%E8%8A%82%E6%B0%94%E9%97%A8/" title="自己动手清洗节气门">&larr; Previous</a></li>
+          
+          
+
+            <li><a href="/archive">Archive</a></li>
+
+          
+            <li class="next"><a href="/tools/%E5%88%9B%E5%BB%BA%E5%9F%BA%E4%BA%8E%E6%9C%AC%E5%9C%B0%E5%8D%8F%E8%AE%AE%E7%9A%84git%E6%9C%8D%E5%8A%A1%E5%99%A8/" title="创建基于本地协议的git服务器">Next &rarr;</a></li>
+          
+          
+        </ul>
+      </ul>
+    </div>
+    <hr>
+    
+<div id="disqus_thread"></div>
+<script>
+    var disqus_developer = 1;
+    var disqus_shortname = 'jekyllbootstrap'; // required: replace example with your forum shortname
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+  </div>
+  
+  <div class="span4">
+    <h4>Published</h4>
+    <div class="date"><span>2013-08-10</span></div>
+    <br>
+    <h4>Categories</h4>
+    <ul class="tag_box">
+    
+      <li>
+  <a href="/categories/#tools-ref">tools <span>2</span></a>
+</li>
+    
+    </ul>
+    <br>
+    <h4>Tags</h4>
+    <ul class="tag_box">
+    
+      <li>
+  <a href="/tags/#git-ref">git <span>2</span></a>
+</li>
+    
+    </ul>
+  </div>
+</div>
+
+      </div>
+
+      <footer>
+        <p>&copy; Ruoqi Deng 2013 
+          with help from <a href="http://github.com/wendal/gor" target="_blank" title="Gor -- Fast Blog">Gor</a>
+          and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
+		  and Idea from <a href="http://ruhoh.com" target="_blank" title="The Definitive Technical Blogging Framework">ruhoh</a>
+        </p>
+      </footer>
+
+    </div> <!-- /container -->
+
+    
+<script src="//cdnjscn.b0.upaiyun.com/libs/prettify/r298/prettify.min.js"></script>
+<script>
+  var pres = document.getElementsByTagName("pre");
+  for (var i=0; i < pres.length; ++i) {
+    pres[i].className = "prettyprint linenums";
+  }
+  prettyPrint();
+</script>
+
+    
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  var pluginUrl = '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+  _gaq.push(['_require', 'inpage_linkid', pluginUrl]);
+  _gaq.push(['_setAccount', 'UA-42808195-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+  </body>
+</html>
