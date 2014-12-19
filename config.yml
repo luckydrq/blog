@@ -20,5 +20,3 @@ imgs:
   urlperfix: '{{urls.media}}/'
   localdir: 'media/'
 
-
-
