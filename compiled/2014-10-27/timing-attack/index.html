@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>树莓派上搭建blog</title>
+    <title>计时攻击浅析</title>
   
     <meta name="author" content="Ruoqi Deng">
 
@@ -78,42 +78,67 @@
 
       <div class="content">
         <div class="page-header">
-  <h1>树莓派上搭建blog </h1>
+  <h1>计时攻击浅析 </h1>
 </div>
 
 <div class="row">
   <div class="span8">
-    <p>在PI上搭建blog是非常平常且让那些极客们嗤之以鼻的事情，而且网上已经有不少这样的文章，比如<a href="http://defworld.com/2013-05/build-your-blog-with-gor-and-pi.html">我同事的这篇文章</a>，里面还引用了许多先人们的文章。那为啥我还要写这么一篇文章？好吧，首先我不是极客，可以没有极客的节操。其次时代在进步，有些先人们遇到的坑已被填平，而新的坑又在等着我。最后是给自己的一个交代，好歹也折腾了好几天。。。</p>
+    <p>今天在扒代码的时候看到有个cookie验证的<a href="https://github.com/expressjs/keygrip">模块</a>，它的原理就是通过对cookie进行签名和验签。不过，其中有个小模块<a href="https://github.com/freewil/scmp">scmp</a>引起了我的注意，经过google才知道“计时攻击”（Timing Attack）这么个东西，看来安全方面自己还有很多东西要补。</p>
 
-<p>我是个懒人，因此搭建博客也是按照先人们的方案来搞得（基于<code>GOR</code>搭建）。当初就是看上了它应用的<code>bootstrap</code>的界面风格，很简洁。不废话，下面我就直接进行总结：</p>
+<h2><a style="display: block;" name="看代码" href="#看代码"></a>看代码</h2>
 
-<h3>Go安装</h3>
+<p>scmp模块代码很少，如下：</p>
 
-<p>直接用官网<code>go1.2.2.linux-386.tar.gz</code>这个版本的包就行了，编译、测试都能通过（时间有点长）。不需要按先人们所说的用什么<code>TIP</code>分支的代码。另外，不要在PI上直接下载tar包，那样会很慢。先下载到自己的机器再<code>scp</code>到PI上。</p>
+<pre><code>module.exports = function scmp(a, b) {
+  a = String(a);
+  b = String(b);
+  if (a.length !== b.length) {
+    return false;
+  }
+  var result = 0;
+  for (var i = 0; i &lt; a.length; ++i) {
+    result |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  }
+  return result === 0;
+};
+</code></pre>
 
-<h3>SSL故障</h3>
+<p>这就是个字符串比较的函数啊，有什么稀奇的。但仔细一看实现过程，是不是有点蛋疼？！直接<code>return a == b</code>不就行了。这里就要说下什么是计时攻击。</p>
 
-<p>不知道是个例还是所有这个批次的Respbian都有这个问题(我的内核版本是3.12.19+)，在进行https连接时报CA证书校验失败，导致直接https用不了。网上找了一堆解决方案都不行。于是，直接重新安装了<code>openssl</code>，得以解决。</p>
+<blockquote>
+<p>计时攻击 属于旁路攻击的一种, 所谓旁路攻击就是通过对系统的物理学分析和实现方式分析, 而不是密码学分析或暴力破解, 来尝试破解密码学系统的行为.</p>
+</blockquote>
 
-<h3>DDNS</h3>
+<h2><a style="display: block;" name="怎么理解？" href="#怎么理解？"></a>怎么理解？</h2>
 
-<p>在给PI设置固定的局域网IP，并给路由器设置了端口转发规则之后，接下来要搞定的就是动态DNS的问题，因为路由器的公网IP是会变化的，这样在域名解析的时候也需要动态更新IP。一开始，我用的是同事文章里的这段<code>python</code><a href="https://gist.github.com/chuangbo/833369">脚本</a>，但是不知道为什么，当路由器IP变化的时候，dnspod上还是没有更新过来，导致博客直接就挂掉了。就这样过了两三周一直拖着没做，今天有空就用nodejs根据dnspod提供的开放api写了一个简单的更新A记录的客户端（其实之前已经有人实现了一个比较完备的，但在PI上却跑不起来，node环境v0.10.28），其实就是一个命令，具体用法看<a href="https://github.com/luckydrq/dnspod-ddns2">这里</a>，就不多说了。把这行命令粘贴到<code>/etc/rc.local</code>里，可以实现开机自启动。</p>
+<p>如果直接以<code>a == b</code>作为条件来判断，大多数实现会对字符串进行逐字节匹配，如果发现有不匹配的，则立刻返回<code>false</code>。这样，比较的快慢就与字符串的顺序匹配度成反比，直接结果反应在响应时间上（虽然这些都是微妙级的）。通过大量的数据采集，就有可能推测出推测出明文。</p>
 
-<p>大概就这么多，欢迎交流。</p>
+<p>现在，你应该理解上面的代码为啥要这样写了。因为它对字符串的每个位都比较一遍，所以响应时间几乎是常量（constant-time）。这种比较方式在性能上也许有些损耗，但最大程度上杜绝计时攻击。</p>
+
+<h2><a style="display: block;" name="感想" href="#感想"></a>感想</h2>
+
+<p>这种攻击要得手的话，对时间的要求也太苛刻了吧，会受到很多因素干扰，感觉很不靠谱，哈哈。</p>
+
+<h3>参考文章</h3>
+
+<ul>
+<li><a href="http://codahale.com/a-lesson-in-timing-attacks/">http://codahale.com/a-lesson-in-timing-attacks/</a></li>
+<li><a href="https://ruby-china.org/topics/21380">https://ruby-china.org/topics/21380</a></li>
+</ul>
 
     <hr>
     <div class="pagination">
       <ul>
         <ul>
           
-            <li class="prev"><a href="/2014-07-13/generator-base" title="Generator基础篇">&larr; Previous</a></li>
+            <li class="prev"><a href="/2014-11-06/xst-attack" title="XST攻击浅析">&larr; Previous</a></li>
           
           
 
             <li><a href="/archive">Archive</a></li>
 
           
-            <li class="next"><a href="/2013-09-09/responsive-web-design" title="响应式设计小结">Next &rarr;</a></li>
+            <li class="next"><a href="/2014-10-23/peer-dependencies" title="Peer dependencies">Next &rarr;</a></li>
           
           
         </ul>
@@ -139,23 +164,19 @@
   
   <div class="span4">
     <h4>Published</h4>
-    <div class="date"><span>2014-06-02</span></div>
+    <div class="date"><span>2014-10-27</span></div>
     <br>
     <h4>Categories</h4>
     <ul class="tag_box">
     
       <li>
-  <a href="/categories/#tools-ref">tools <span>4</span></a>
+  <a href="/categories/#web-security-ref">web security <span>2</span></a>
 </li>
     
     </ul>
     <br>
     <h4>Tags</h4>
     <ul class="tag_box">
-    
-      <li>
-  <a href="/tags/#pi-ref">pi <span>1</span></a>
-</li>
     
     </ul>
   </div>

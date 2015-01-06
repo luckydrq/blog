@@ -4,6 +4,26 @@
 		<loc>http://luckydrq.com/</loc>
 	</url>
 	<url>
+		<loc>http://luckydrq.com/2014-12-04/git-commit-message</loc>
+		<lastmod>2014-12-04</lastmod>
+		<changefreq>weekly</changefreq>
+	</url>
+	<url>
+		<loc>http://luckydrq.com/2014-11-06/xst-attack</loc>
+		<lastmod>2014-11-06</lastmod>
+		<changefreq>weekly</changefreq>
+	</url>
+	<url>
+		<loc>http://luckydrq.com/2014-10-27/timing-attack</loc>
+		<lastmod>2014-10-27</lastmod>
+		<changefreq>weekly</changefreq>
+	</url>
+	<url>
+		<loc>http://luckydrq.com/2014-10-23/peer-dependencies</loc>
+		<lastmod>2014-10-23</lastmod>
+		<changefreq>weekly</changefreq>
+	</url>
+	<url>
 		<loc>http://luckydrq.com/2014-10-14/cluster-analyse-one</loc>
 		<lastmod>2014-10-14</lastmod>
 		<changefreq>weekly</changefreq>

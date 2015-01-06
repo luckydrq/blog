@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>树莓派上搭建blog</title>
+    <title>XST攻击浅析</title>
   
     <meta name="author" content="Ruoqi Deng">
 
@@ -78,42 +78,94 @@
 
       <div class="content">
         <div class="page-header">
-  <h1>树莓派上搭建blog </h1>
+  <h1>XST攻击浅析 </h1>
 </div>
 
 <div class="row">
   <div class="span8">
-    <p>在PI上搭建blog是非常平常且让那些极客们嗤之以鼻的事情，而且网上已经有不少这样的文章，比如<a href="http://defworld.com/2013-05/build-your-blog-with-gor-and-pi.html">我同事的这篇文章</a>，里面还引用了许多先人们的文章。那为啥我还要写这么一篇文章？好吧，首先我不是极客，可以没有极客的节操。其次时代在进步，有些先人们遇到的坑已被填平，而新的坑又在等着我。最后是给自己的一个交代，好歹也折腾了好几天。。。</p>
+    <p>最近在考虑node项目里web安全相关的问题，公司的安全同学要求在生产环境禁用<code>HTTP TRACE</code>。于是就研究了一下，发现利用<code>TRACE</code>攻击一旦得手的话，风险会很大。</p>
 
-<p>我是个懒人，因此搭建博客也是按照先人们的方案来搞得（基于<code>GOR</code>搭建）。当初就是看上了它应用的<code>bootstrap</code>的界面风格，很简洁。不废话，下面我就直接进行总结：</p>
+<h2><a style="display: block;" name="cross-site-tracing" href="#cross-site-tracing"></a>Cross-Site Tracing</h2>
 
-<h3>Go安装</h3>
+<p>XST的全称是<code>Cross-Site Tracing</code>，名称上和我们熟知的<code>XSS</code>(Cross-Site Scripting)很相似。但两者其实是没有什么关系的。客户端发<code>TRACE</code>请求至服务器，如果服务器按照<a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html">标准</a>实现了TRACE响应，则在<code>response body</code>里会返回此次请求的完整头信息。通过这种方式，客户端可以获取某些敏感的头字段，例如<code>httpOnly</code>的cookie。</p>
 
-<p>直接用官网<code>go1.2.2.linux-386.tar.gz</code>这个版本的包就行了，编译、测试都能通过（时间有点长）。不需要按先人们所说的用什么<code>TIP</code>分支的代码。另外，不要在PI上直接下载tar包，那样会很慢。先下载到自己的机器再<code>scp</code>到PI上。</p>
+<p>下面我们基于koa来实现一个简单的支持<code>TRACE</code>方法的服务器：</p>
 
-<h3>SSL故障</h3>
+<pre><code>var koa = require('koa');
+var app = koa();
 
-<p>不知道是个例还是所有这个批次的Respbian都有这个问题(我的内核版本是3.12.19+)，在进行https连接时报CA证书校验失败，导致直接https用不了。网上找了一堆解决方案都不行。于是，直接重新安装了<code>openssl</code>，得以解决。</p>
+app.use(function* (next) {
+  this.cookies.set('a', 1, { httpOnly: true });
+  if (this.method === 'TRACE') {
+    var body = '';
+    for (header in this.headers) {
+      body += header + ': ' + this.headers[header] + '\r\n';
+    }
+    this.body = body;
+  }
+  yield* next;
+});
 
-<h3>DDNS</h3>
+app.listen(7001);
+</code></pre>
 
-<p>在给PI设置固定的局域网IP，并给路由器设置了端口转发规则之后，接下来要搞定的就是动态DNS的问题，因为路由器的公网IP是会变化的，这样在域名解析的时候也需要动态更新IP。一开始，我用的是同事文章里的这段<code>python</code><a href="https://gist.github.com/chuangbo/833369">脚本</a>，但是不知道为什么，当路由器IP变化的时候，dnspod上还是没有更新过来，导致博客直接就挂掉了。就这样过了两三周一直拖着没做，今天有空就用nodejs根据dnspod提供的开放api写了一个简单的更新A记录的客户端（其实之前已经有人实现了一个比较完备的，但在PI上却跑不起来，node环境v0.10.28），其实就是一个命令，具体用法看<a href="https://github.com/luckydrq/dnspod-ddns2">这里</a>，就不多说了。把这行命令粘贴到<code>/etc/rc.local</code>里，可以实现开机自启动。</p>
+<p>启动服务后，先发个GET请求 <code>curl -i http://127.0.0.1:7001</code>，得到如下响应：</p>
 
-<p>大概就这么多，欢迎交流。</p>
+<pre><code>HTTP/1.1 200 OK
+X-Powered-By: koa
+Set-Cookie: a=1; path=/; httponly
+Content-Type: text/plain; charset=utf-8
+Content-Length: 2
+Date: Thu, 06 Nov 2014 05:04:42 GMT
+Connection: keep-alive
+
+OK
+</code></pre>
+
+<p>服务器设置了一个<code>httpOnly</code>的cookie<code>a=1</code>，在浏览器环境中，是无法通过脚本获取它的。</p>
+
+<p>接着我们发<code>TRACE</code>请求到服务器<code>curl -X TRACE -b a=1 -i http://127.0.0.1:7001</code>，并带上cookie，得到如下响应：</p>
+
+<pre><code>HTTP/1.1 200 OK
+X-Powered-By: koa
+Set-Cookie: a=1; path=/; httponly
+Content-Type: text/plain; charset=utf-8
+Content-Length: 73
+Date: Thu, 06 Nov 2014 05:07:47 GMT
+Connection: keep-alive
+
+user-agent: curl/7.37.1
+host: 127.0.0.1:7001
+accept: */*
+cookie: a=1
+</code></pre>
+
+<p>在响应体里可以看到完整的头信息，这样我们就绕过了<code>httpOnly</code>的限制，拿到了cookie<code>a=1</code>，造成了很大的风险。</p>
+
+<h2><a style="display: block;" name="应对策略" href="#应对策略"></a>应对策略</h2>
+
+<p>目前主流的浏览器在xhr请求里都禁止了<code>TRACE</code>方法，一定程度上降低了风险。但是，第三方插件如flash，仍存在可以发<code>TRACE</code>请求的风险。</p>
+
+<p>因此，无论如何请禁用<code>TRACE</code>方法。</p>
+
+<h2><a style="display: block;" name="reference" href="#reference"></a>Reference</h2>
+
+<p><a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html">http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html</a>
+<a href="http://deadliestwebattacks.com/2010/05/18/cross-site-tracing-xst-the-misunderstood-vulnerability/">http://deadliestwebattacks.com/<sup>2010</sup>&frasl;<sub>05</sub>/18/cross-site-tracing-xst-the-misunderstood-vulnerability/</a></p>
 
     <hr>
     <div class="pagination">
       <ul>
         <ul>
           
-            <li class="prev"><a href="/2014-07-13/generator-base" title="Generator基础篇">&larr; Previous</a></li>
+            <li class="prev"><a href="/2014-12-04/git-commit-message" title="配置git的commit_message模板">&larr; Previous</a></li>
           
           
 
             <li><a href="/archive">Archive</a></li>
 
           
-            <li class="next"><a href="/2013-09-09/responsive-web-design" title="响应式设计小结">Next &rarr;</a></li>
+            <li class="next"><a href="/2014-10-27/timing-attack" title="计时攻击浅析">Next &rarr;</a></li>
           
           
         </ul>
@@ -139,13 +191,13 @@
   
   <div class="span4">
     <h4>Published</h4>
-    <div class="date"><span>2014-06-02</span></div>
+    <div class="date"><span>2014-11-06</span></div>
     <br>
     <h4>Categories</h4>
     <ul class="tag_box">
     
       <li>
-  <a href="/categories/#tools-ref">tools <span>4</span></a>
+  <a href="/categories/#web-security-ref">web security <span>2</span></a>
 </li>
     
     </ul>
@@ -154,7 +206,7 @@
     <ul class="tag_box">
     
       <li>
-  <a href="/tags/#pi-ref">pi <span>1</span></a>
+  <a href="/tags/#xst-ref">xst <span>1</span></a>
 </li>
     
     </ul>
