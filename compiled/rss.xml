@@ -2,7 +2,7 @@
 <rss version="2.0">  <channel>
     <title>Lucky Blog</title>
     <link>http://luckydrq.com</link>
-    <pubDate>14 Oct 14 22:06 CST</pubDate>
+    <pubDate>06 Jan 15 11:18 CST</pubDate>
     <item>
       <title>Cluster机制剖析1——进程复制</title>
       <link>http://luckydrq.com/2014-10-14/cluster-analyse-one</link>
